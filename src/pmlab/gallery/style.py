@@ -66,7 +66,7 @@ def title_block(fig: Figure, title: str, subtitle: str | None = None) -> None:
     height = fig.get_figheight()
     fig.suptitle(title, x=0.012, y=1 - 0.22 / height, ha="left", va="top", fontsize=14, fontweight="bold", color=PALETTE["ink"])
     if subtitle:
-        wrapped = textwrap.fill(subtitle, int(fig.get_figwidth() * 14.5))  # about the characters a line holds
+        wrapped = textwrap.fill(subtitle, int(fig.get_figwidth() * 13.2))  # about the characters a line holds
         fig.text(0.012, 1 - 0.52 / height, wrapped, ha="left", va="top", fontsize=9.5, color=PALETTE["muted"])
 
 

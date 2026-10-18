@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.1.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.2.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -24,15 +24,15 @@ the financial engineering of the asset class over ten days, one part a day.
 | Day | Area | Status |
 |---|---|---|
 | 1 | Cash flows and performance measures: every IRR, MIRR, multiples, the PME family, the J-curve | ✅ v0.1.0 |
-| 2 | Fees and waterfalls: European and American carry, hurdles, catch-up, clawback, gross to net | |
-| 3 | Fund cash-flow models: Takahashi-Alexander, stochastic models, calibration, vintage dispersion | |
-| 4 | Secondaries: pricing LP interests, discounts to NAV, continuation funds, NAV loans | |
-| 5 | Smoothed returns and true risk: unsmoothing appraisal returns, real estate indices against REITs | |
-| 6 | Risk-adjusted performance: stochastic discount factors, cash-flow betas, listed proxies | |
-| 7 | Commitment pacing and liquidity: overcommitment, capital-call stress, the denominator effect | |
-| 8 | Portfolio construction with illiquid assets: unsmoothed risk, liquidity constraints, dynamic programming | |
-| 9 | Hedge funds and liquid alternatives: factor replication, trend following as an option, tail risk | |
-| 10 | The platform: a 30-year endowment simulator, dashboard and reproducible reports | |
+| 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | ✅ v0.2.0 |
+| 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV |  |
+| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations |  |
+| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values |  |
+| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies |  |
+| 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas |  |
+| 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming |  |
+| 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk |  |
+| 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports |  |
 
 The plan and each day's results are in the [roadmap](docs/ROADMAP.md), the charts in the
 [gallery](docs/GALLERY.md), the checks in [VALIDATION.md](docs/VALIDATION.md), and the decisions
@@ -60,6 +60,30 @@ schedule, value bridge, exit waterfall - is a separate project,
 
 The full account is in [cash flows and performance measures](docs/notes/cash-flows-and-performance.md).
 
+**Day 2: fees, waterfalls and carried interest as an option.**
+
+- **A waterfall engine** for European and American funds: management fees on commitments or
+  invested cost, a compounded hurdle, full or partial catch-up, interim carry and a clawback with
+  partial recovery. It is vectorised, so 20,000 funds run in under a second, and every pound is
+  accounted for to 1e-13.
+- **Gross to net.** A fund whose deals earn 15% a year returns 10.2% net under 2 and 20; the GP
+  takes 34% of the gross profit, not 20%. Fees cost investors more than carry: halving the fee
+  saves 1.5 points of net IRR, halving the carry 0.8.
+- **Carry is a call spread,** `cu C(H) - (cu - c) C(V*)`, priced by Black-Scholes and matched by
+  Monte Carlo through the waterfall to 1.1 standard errors. In present value the GP expects 14.6
+  per 100 committed, 83% of it fixed fees (Metrick and Yasuda, 2010).
+- **Break-even alpha:** the deals must beat a fairly priced investment by 4.0% a year for the LPs'
+  stake to be worth its cost.
+- **Deal by deal, the clawback is the rule:** 82% of simulated American funds overpay their GP, by
+  24% of all carry. A portfolio of options (4.9) is worth far more than an option on a portfolio
+  (0.7 with independent deals).
+
+![Carried interest is a call spread](docs/images/carry-as-options.png)
+
+The full account is in [fees, waterfalls and carried interest](docs/notes/fees-waterfalls-and-carry.md);
+`pmlab fees --waterfall american --recovery 0.5` prints gross to net and the contract's value for
+any terms.
+
 ## Validation
 
 `pmlab validate` holds every measure to a published value, an independent method, or an identity
@@ -73,6 +97,9 @@ that must hold. A selection:
 | Every root | mpmath polynomial roots at 50 digits, 600 streams | 9e-15; none above Descartes' bound |
 | PME identities | a fund that is the index, all five methods | 6.5e-16 |
 | Direct Alpha | the alpha built into noise-free funds | 1.4e-17 |
+| Waterfall | LP + GP flows equal the deals' flows, 8,000 funds | 1.1e-13 |
+| Carry | Black-Scholes call spread against Monte Carlo through the waterfall | max \|z\| 1.08 |
+| Carry | closed form against quadrature of the payoff | 1.5e-8 |
 
 ## Quickstart
 

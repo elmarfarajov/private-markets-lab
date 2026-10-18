@@ -13,9 +13,11 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
+from .carry import carry_closed_form, carry_payoff, single_deal_mc, value
 from .cashflows import CashFlows, fund_irr, irr, irr_roots, mirr, multiples, norstrom, periodic_roots, sign_changes
 from .pme import direct_alpha, ks_pme, long_nickels, mpme, pme_plus, report
 from .synthetic import FundSpec, gbm_market, simulate_fund
+from .waterfall import DealModel, Terms, check_conservation, flat_multiples, run, standard_shape
 
 
 @dataclass
@@ -203,6 +205,89 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
         mpme(t, a, f.index[: t.size], navs)  # computable mid-life
         return "TVPI = DPI + RVPI; PIC = calls", f"TVPI {m.tvpi:.4f} at year 7", f"{gap:.1e}", gap < 1e-12
 
+    def waterfall_conservation() -> tuple[str, str, str, bool]:
+        shape = standard_shape()
+        m = DealModel(mu=0.10, sigma=0.5, rho=0.3, seed=21).draw(shape, 2000)
+        gaps = []
+        for t in (
+            Terms(),
+            Terms(waterfall="american"),
+            Terms(waterfall="american", clawback_recovery=0.4),
+            Terms(catch_up=0.8, hurdle=0.06),
+        ):
+            gaps.append(check_conservation(run(shape, m, t)))
+        gap = max(gaps)
+        return "LP + GP flows = the deals' flows, every fund", "2,000 funds x 4 sets of terms", f"{gap:.1e}", gap < 1e-9
+
+    def carry_closed_form_vs_quadrature() -> tuple[str, str, str, bool]:
+        from scipy import integrate
+
+        worst = 0.0
+        r, years = 0.04, 5.0
+        for t in (Terms(), Terms(catch_up=0.8), Terms(catch_up=0.0), Terms(hurdle=0.0, carry=0.3)):
+            for sigma in (0.2, 0.5):
+
+                def f(z: float, sigma: float = sigma, t: Terms = t) -> float:
+                    v = 100 * np.exp((r - 0.5 * sigma**2) * years + sigma * np.sqrt(years) * z)
+                    return float(carry_payoff(v, 100, years, t)) * float(np.exp(-0.5 * z * z)) / float(np.sqrt(2 * np.pi))
+
+                quad = integrate.quad(f, -12, 12, limit=400, points=[0.0])[0] * np.exp(-r * years)
+                worst = max(worst, abs(quad - carry_closed_form(100, years, r, sigma, t)))
+        return (
+            "the payoff integrated against the lognormal density",
+            "4 sets of terms x 2 volatilities",
+            f"{worst:.1e}",
+            worst < 1e-6,
+        )
+
+    def carry_engine_vs_formula() -> tuple[str, str, str, bool]:
+        n = 50000 if fast else 200000
+        zs = []
+        for k, (t, sigma) in enumerate(
+            ((Terms(), 0.3), (Terms(catch_up=0.8), 0.5), (Terms(catch_up=0.0), 0.4), (Terms(hurdle=0.0), 0.6))
+        ):
+            mc, se = single_deal_mc(5.0, 0.04, sigma, t, funds=n, seed=100 + k)
+            zs.append((mc - carry_closed_form(100, 5.0, 0.04, sigma, t)) / se)
+        worst = float(np.max(np.abs(zs)))
+        return (
+            "Black-Scholes call spread against Monte Carlo through the waterfall",
+            f"4 cases, {n:,} paths each",
+            f"max |z| {worst:.2f}",
+            worst < 4.0,
+        )
+
+    def catch_up_identity() -> tuple[str, str, str, bool]:
+        shape = standard_shape()
+        worst = 0.0
+        for g in (0.18, 0.25, 0.35):
+            out = run(shape, flat_multiples(shape, g), Terms())
+            profit = out.gross.sum() - out.contributions.sum()
+            worst = max(worst, abs(float(out.carry.sum()) - 0.2 * profit))
+        return "full catch-up: carry = 20% of profit above the catch-up", "gross IRR 18%, 25%, 35%", f"{worst:.1e}", worst < 1e-9
+
+    def clawback_bounds() -> tuple[str, str, str, bool]:
+        shape = standard_shape()
+        m = DealModel(mu=0.08, sigma=0.6, rho=0.2, seed=22).draw(shape, 5000)
+        am = run(shape, m, Terms(waterfall="american"))
+        profit = np.maximum(am.gross_profit() - am.fees.sum(), 0.0)
+        kept = am.carry_kept
+        paid = am.carry.sum(axis=1)
+        gap1 = float(np.max(kept - 0.2 * profit))  # never above 20% of net profit
+        gap2 = float(np.max(np.abs(kept - np.minimum(paid, am.entitlement))))  # full recovery returns exactly the excess
+        worst = max(gap1, gap2)
+        return "kept carry = min(paid, entitlement) <= 20% of profit", "5,000 American funds", f"{worst:.1e}", worst < 1e-9
+
+    def risk_neutral_identity() -> tuple[str, str, str, bool]:
+        v = value(standard_shape(), Terms(), DealModel(sigma=0.4, rho=0.3, seed=23), 0.04, 20000 if fast else 60000)
+        total = v.lp + v.fees + v.carry
+        z = total / v.lp_se
+        return (
+            "zero alpha: LP value = -(fees + carry)",
+            f"LP {v.lp:.2f}, fees {v.fees:.2f}, carry {v.carry:.2f}",
+            f"z {z:.2f}",
+            abs(z) < 4.0,
+        )
+
     add("IRR", "XIRR, published example", xirr_microsoft)
     add("IRR", "MIRR, published examples", mirr_microsoft)
     add("IRR", "Two IRRs: the pump problem", lorie_savage)
@@ -216,6 +301,12 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("PME", "Direct Alpha recovers the true alpha", alpha_recovered)
     add("PME", "Kaplan-Schoar and Direct Alpha agree in sign", ks_and_alpha_agree)
     add("PME", "PME+ scaling", pme_plus_scale)
+    add("Waterfall", "Every pound accounted for", waterfall_conservation)
+    add("Waterfall", "Catch-up gives exactly the carry share", catch_up_identity)
+    add("Waterfall", "Clawback returns exactly the excess", clawback_bounds)
+    add("Carry", "Closed form against quadrature", carry_closed_form_vs_quadrature)
+    add("Carry", "Closed form against the waterfall engine", carry_engine_vs_formula)
+    add("Carry", "LPs lose what the GP gains", risk_neutral_identity)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 

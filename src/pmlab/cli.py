@@ -88,6 +88,30 @@ def cmd_gallery(args: argparse.Namespace) -> None:
     print(f"{len(written)} charts written to {args.out}")
 
 
+def cmd_fees(args: argparse.Namespace) -> None:
+    from .carry import value
+    from .waterfall import DealModel, Terms, gross_to_net, standard_shape
+
+    terms = Terms(
+        fee=args.fee,
+        post_fee=args.post_fee,
+        carry=args.carry,
+        hurdle=args.hurdle,
+        catch_up=args.catch_up,
+        waterfall=args.waterfall,
+        clawback_recovery=args.recovery,
+    )
+    shape = standard_shape()
+    print(f"terms: {terms.label}")
+    table = gross_to_net(shape, terms, [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30])
+    print(table.round(3).to_string(index=False))
+    v = value(shape, terms, DealModel(sigma=args.sigma, rho=args.rho), args.rate, args.funds)
+    print(
+        f"\npresent value per 100 committed (risk-neutral, deal volatility {args.sigma:.0%}): fees {v.fees:.2f}, "
+        f"carry {v.carry:.2f} (se {v.carry_se:.2f}), LP stake {v.lp:.2f}; {v.fixed_share:.0%} of GP revenue is fixed"
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="pmlab", description="Private markets and alternative investments, measured.")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -99,6 +123,20 @@ def build_parser() -> argparse.ArgumentParser:
     one.add_argument("--reinvest", type=float, default=0.08, help="MIRR reinvestment rate")
     one.add_argument("--index", choices=["sp500", "small", "nasdaq", "value"], default=None, help="benchmark for the PMEs")
     one.set_defaults(func=cmd_irr)
+
+    fees = sub.add_parser("fees", help="gross to net, and the value of fees and carry, under a set of terms")
+    fees.add_argument("--fee", type=float, default=0.02)
+    fees.add_argument("--post-fee", type=float, default=None)
+    fees.add_argument("--carry", type=float, default=0.20)
+    fees.add_argument("--hurdle", type=float, default=0.08)
+    fees.add_argument("--catch-up", type=float, default=1.0)
+    fees.add_argument("--waterfall", choices=["european", "american"], default="european")
+    fees.add_argument("--recovery", type=float, default=1.0, help="share of a clawback actually recovered")
+    fees.add_argument("--sigma", type=float, default=0.40, help="deal volatility")
+    fees.add_argument("--rho", type=float, default=0.30, help="correlation between deals")
+    fees.add_argument("--rate", type=float, default=0.04, help="risk-free rate")
+    fees.add_argument("--funds", type=int, default=20000)
+    fees.set_defaults(func=cmd_fees)
 
     data = sub.add_parser("market", help="store the index histories from Yahoo Finance, or list them")
     data.add_argument("action", choices=["fetch", "list"])

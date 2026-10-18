@@ -4,6 +4,28 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-10-19
+
+Day 2: fees, waterfalls and carried interest as an option.
+
+### Added
+
+- **`pmlab.waterfall`**: `Terms` (fee bases, carry, hurdle, catch-up, European or American, clawback
+  recovery); the fee schedule with the invested share solved exactly; vectorised European and
+  American waterfalls; the clawback to a whole-fund entitlement; gross-to-net tables; a lognormal
+  deal model with a common factor; a conservation check.
+- **`pmlab.carry`**: Black (1976) calls; the carry's option decomposition and closed form;
+  risk-neutral valuation of fees, carry and the LPs' stake; the break-even alpha; single-deal Monte
+  Carlo through the waterfall.
+- **`pmlab fees`** command: gross to net and the contract's value for any terms.
+- Sixteen charts, the Day 2 note, ADRs 0006-0008.
+- Six validation checks (19 in all) and 28 tests, including a property-based conservation test.
+
+### Changed
+
+- The ten-day plan was revised (Days 3-10) and the issues retitled.
+- Chart subtitles wrap narrower so that they are not cut off.
+
 ## [0.1.0] - 2026-10-18
 
 Day 1: cash flows and performance measures. Every IRR of a stream, the multiples, five public
