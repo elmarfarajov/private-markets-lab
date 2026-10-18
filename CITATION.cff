@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Private Markets Lab: cash flows, fees, fund models, risk and allocation for private markets and alternatives"
+authors:
+  - family-names: Farajov
+    given-names: Elmar
+version: 0.1.0
+date-released: 2026-10-18
+license: MIT
+repository-code: "https://github.com/elmarfarajov/private-markets-lab"
+keywords:
+  - private equity
+  - public market equivalent
+  - internal rate of return
+  - alternative investments
+  - endowment model
