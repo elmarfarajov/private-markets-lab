@@ -57,7 +57,12 @@ def test_market_files_round_trip(tmp_path):
     assert market.load("sp500", tmp_path).tolist() == [1.0, 2.0, 3.0]
 
 
-def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones():
+def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatch):
+    from pmlab.gallery import fees
+
+    monkeypatch.setattr(fees, "SIMS", 600)  # the charts' Monte Carlo, at a size a test can afford
+    for cached in (fees._value, fees._vega, fees._revenue, fees._alpha_curves):
+        cached.cache_clear()
     names = [i.filename for i in gallery.items()]
     assert len(names) == len(set(names))
     page = gallery.markdown()
@@ -66,6 +71,8 @@ def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones():
         if item.requires is None:
             fig = item.build()
             assert fig.axes and item.day in gallery.DAYS
+    for cached in (fees._value, fees._vega, fees._revenue, fees._alpha_curves):
+        cached.cache_clear()
 
 
 @pytest.mark.parametrize("item", [i for i in gallery.items() if i.requires == "market"], ids=lambda i: i.filename)
@@ -99,3 +106,9 @@ def test_the_parser_and_the_markdown_table():
 def test_the_validation_suite_passes_in_fast_mode(capsys):
     main(["validate", "--fast"])
     assert "FAIL" not in capsys.readouterr().out
+
+
+def test_the_fees_command(capsys):
+    main(["fees", "--funds", "2000", "--waterfall", "american"])
+    out = capsys.readouterr().out
+    assert "terms: 2 and 20, 8% hurdle, full catch-up, american" in out and "of GP revenue is fixed" in out
