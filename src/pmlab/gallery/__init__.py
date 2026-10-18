@@ -18,6 +18,7 @@ from .style import save
 
 DAYS: dict[int, str] = {
     1: "Cash flows and performance measures",
+    2: "Fees, waterfalls and carried interest as an option",
 }
 
 
@@ -36,7 +37,7 @@ class Item:
 
 def items() -> tuple[Item, ...]:
     # imported here so that the package imports without the charts' own dependencies being loaded
-    from . import cashflows
+    from . import cashflows, fees
 
     return (
         Item(
@@ -92,6 +93,108 @@ def items() -> tuple[Item, ...]:
             1,
             "market",
         ),
+        Item(
+            "waterfall-tiers.png",
+            "Four tiers decide who gets each pound",
+            "The European waterfall's tiers and the GP's share of profit.",
+            fees.waterfall_tiers,
+            2,
+        ),
+        Item(
+            "carry-as-options.png",
+            "Carried interest is a call spread",
+            "The carry payoff as two calls, and its Black-Scholes value.",
+            fees.carry_as_options,
+            2,
+        ),
+        Item(
+            "gross-to-net.png",
+            "From gross to net",
+            "Net IRR against gross IRR under six sets of terms.",
+            fees.gross_to_net_chart,
+            2,
+        ),
+        Item(
+            "gp-share.png",
+            "Two and twenty takes more than twenty",
+            "The GP's take as a share of gross profit.",
+            fees.gp_share_chart,
+            2,
+        ),
+        Item(
+            "fee-schedules.png",
+            "Fees come out of the commitment",
+            "Quarterly fees under four fee bases, and what is left to invest.",
+            fees.fee_schedules,
+            2,
+        ),
+        Item(
+            "european-vs-american.png",
+            "Deal by deal, winners are paid first",
+            "Cumulative carry under each waterfall for one fund, and the clawback.",
+            fees.european_vs_american,
+            2,
+        ),
+        Item(
+            "clawback.png",
+            "The clawback is the rule",
+            "How often and how much an American waterfall overpays, across 20,000 funds.",
+            fees.clawback_distribution,
+            2,
+        ),
+        Item(
+            "carry-vega.png",
+            "Riskier deals are worth more to the GP",
+            "Carry and the LPs' stake against deal volatility.",
+            fees.carry_vega,
+            2,
+        ),
+        Item(
+            "carry-correlation.png",
+            "A portfolio of options",
+            "Carry value against the correlation between deals.",
+            fees.carry_correlation,
+            2,
+        ),
+        Item(
+            "gp-revenue.png",
+            "Most of a manager's pay is fixed",
+            "Present value of fees and carry per 100 committed (Metrick-Yasuda).",
+            fees.gp_revenue,
+            2,
+        ),
+        Item(
+            "break-even-alpha.png",
+            "Four points a year to break even",
+            "The LPs' stake against deal alpha, and the break-even alpha.",
+            fees.break_even,
+            2,
+        ),
+        Item(
+            "hurdle-catch-up.png",
+            "A hurdle with a catch-up is a timing device",
+            "Carry value against the hurdle rate for four catch-ups.",
+            fees.hurdle_catch_up,
+            2,
+        ),
+        Item(
+            "closed-form-check.png",
+            "Engine and formula agree",
+            "Closed-form carry against Monte Carlo through the waterfall.",
+            fees.closed_form_check,
+            2,
+        ),
+        Item(
+            "fee-heatmap.png", "The fee costs more than the carry", "Gross minus net IRR by fee and carry.", fees.fee_heatmap, 2
+        ),
+        Item(
+            "net-distribution.png",
+            "Fees shift the distribution, carry trims the top",
+            "Gross and net IRRs of 4,000 simulated funds.",
+            fees.net_distribution,
+            2,
+        ),
+        Item("carry-delta.png", "Carry rewards skill", "Carry and fees against deal alpha.", fees.carry_delta, 2),
     )
 
 
