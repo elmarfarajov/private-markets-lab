@@ -8,15 +8,18 @@ examples, independent methods, identities that must hold, and funds whose truth 
 | Day | Area | Issue | Release | Status |
 |---|---|---|---|---|
 | 1 | Cash flows and performance measures: every IRR, MIRR, multiples, the PME family, the J-curve | #1 | v0.1.0 | ✅ Done |
-| 2 | Fees and waterfalls: European and American carry, hurdles, catch-up, clawback, gross to net | #2 | v0.2.0 | Next |
-| 3 | Fund cash-flow models: Takahashi-Alexander, stochastic models, calibration, vintage dispersion | #3 | v0.3.0 | |
-| 4 | Secondaries: pricing LP interests, discounts to NAV, continuation funds, NAV loans | #4 | v0.4.0 | |
-| 5 | Smoothed returns and true risk: unsmoothing appraisal returns, real estate indices against REITs | #5 | v0.5.0 | |
-| 6 | Risk-adjusted performance: stochastic discount factors, cash-flow betas, listed proxies | #6 | v0.6.0 | |
-| 7 | Commitment pacing and liquidity: overcommitment, capital-call stress, the denominator effect | #7 | v0.7.0 | |
-| 8 | Portfolio construction with illiquid assets: unsmoothed risk, liquidity constraints, dynamic programming | #8 | v0.8.0 | |
-| 9 | Hedge funds and liquid alternatives: factor replication, trend following as an option, tail risk | #9 | v0.9.0 | |
-| 10 | The platform: a 30-year endowment simulator, dashboard and reproducible reports | #10 | v1.0.0 | |
+| 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | #2 | v0.2.0 | ✅ Done |
+| 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | #3 | v0.3.0 | Next |
+| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 |  |
+| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 |  |
+| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 |  |
+| 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 |  |
+| 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | #8 | v0.8.0 |  |
+| 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk | #9 | v0.9.0 |  |
+| 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports | #10 | v1.0.0 |  |
+
+The plan was revised on Day 2 to make room for option-based valuation (carry, venture preferred stock),
+NAV nowcasting and stochastic discount factors; the issues were retitled to match.
 
 The deal-level leveraged buyout - operating model, debt schedule, value bridge, exit waterfall -
 is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov/lbo-returns-engine).
@@ -40,3 +43,20 @@ is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov
   - identical managers' IRRs span 1% to 20% across vintages.
 
 **Notes:** [cash flows and performance measures](notes/cash-flows-and-performance.md).
+
+
+## Day 2 - fees, waterfalls and carried interest as an option ✅
+
+**Issue #2, release v0.2.0.**
+
+- **The waterfall engine** (`pmlab.waterfall`). European and American waterfalls, fee bases,
+  compounded hurdle, partial catch-up, interim carry, clawback with partial recovery; vectorised
+  over funds. Every pound accounted for to 1e-13.
+- **Gross to net.** 15% gross becomes 10.2% net under 2 and 20; the GP's take is 34% of gross
+  profit. The catch-up pins 6% of simulated funds at exactly the hurdle.
+- **Carry as an option** (`pmlab.carry`). Closed form `cu C(H) - (cu - c) C(V*)`, matched by Monte
+  Carlo through the waterfall and by quadrature. In present value 83% of the GP's revenue is
+  fixed fees; the break-even alpha is 4.0% a year.
+- **American waterfalls.** The clawback is owed by 82% of funds. A portfolio of options is worth
+  4.9 against 0.7 for an option on a portfolio of independent deals.
+- **Sixteen charts, six validation checks, ADRs 0006-0008.**
