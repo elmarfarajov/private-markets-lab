@@ -58,10 +58,13 @@ def test_market_files_round_trip(tmp_path):
 
 
 def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatch):
-    from pmlab.gallery import fees
+    from pmlab.gallery import fees, fundmodels
 
     monkeypatch.setattr(fees, "SIMS", 600)  # the charts' Monte Carlo, at a size a test can afford
-    for cached in (fees._value, fees._vega, fees._revenue, fees._alpha_curves):
+    monkeypatch.setattr(fundmodels, "SIMS", 400)
+    caches = [fees._value, fees._vega, fees._revenue, fees._alpha_curves]
+    caches += [getattr(fundmodels, n) for n in dir(fundmodels) if hasattr(getattr(fundmodels, n), "cache_clear")]
+    for cached in caches:
         cached.cache_clear()
     names = [i.filename for i in gallery.items()]
     assert len(names) == len(set(names))
@@ -71,7 +74,7 @@ def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatc
         if item.requires is None:
             fig = item.build()
             assert fig.axes and item.day in gallery.DAYS
-    for cached in (fees._value, fees._vega, fees._revenue, fees._alpha_curves):
+    for cached in caches:
         cached.cache_clear()
 
 

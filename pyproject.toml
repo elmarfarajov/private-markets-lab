@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pmlab"
-version = "0.2.0"
+version = "0.3.0"
 description = "Private markets and alternative investments: fund cash flows, fees, models, risk and allocation, each measure held to an independent reference."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -56,6 +56,7 @@ ignore = ["E731"]
 [tool.ruff.lint.per-file-ignores]
 # chart captions are prose; breaking them mid-sentence hurts more than it helps
 "src/pmlab/gallery/fees.py" = ["E501"]
+"src/pmlab/gallery/fundmodels.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.10"

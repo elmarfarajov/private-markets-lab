@@ -10,3 +10,6 @@
 | [0006](0006-the-waterfall-runs-on-cumulative-cash-and-fees-are-capital.md) | The waterfall runs on cumulative cash, fees count as contributed capital, and funds are simulated in bulk | Accepted |
 | [0007](0007-carry-is-valued-as-an-option-under-risk-neutral-pricing.md) | Carry is valued as an option under risk-neutral pricing; fees at the risk-free rate | Accepted |
 | [0008](0008-the-clawback-is-modelled-with-partial-recovery.md) | The clawback is modelled to a whole-fund entitlement, with partial recovery | Accepted |
+| [0009](0009-takahashi-alexander-is-the-skeleton-randomised-not-replaced.md) | Takahashi-Alexander is the skeleton of the fund model, made random rather than replaced | Accepted |
+| [0010](0010-secondaries-are-priced-from-the-buyers-required-return.md) | Secondaries are priced from the buyer's required return, on the true value, with staleness separated | Accepted |
+| [0011](0011-vintage-study-shares-market-paths.md) | Vintage dispersion is measured with funds that share a market path | Accepted |

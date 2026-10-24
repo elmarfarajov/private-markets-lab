@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-10-24
+
+Day 3: fund cash-flow models and the secondary market.
+
+### Added
+
+- **`pmlab.fundmodel`**: the Takahashi-Alexander model and its projection; least-squares
+  calibration to annual curves; annual curves from dated flows; a quarterly stochastic model (market
+  beta, own risk, lognormal cash-flow noise, appraisal smoothing) that can start from any fund
+  state; the noise-free expected path; a vintage study and the between/within variance split.
+- **`pmlab.secondary`**: fund states, the value and discount of an LP interest at a required return,
+  the decomposition of a discount, discount grids, crash dynamics with stale NAVs, buyer IRR
+  distributions, and a Monte Carlo check.
+- Sixteen charts, the Day 3 note, ADRs 0009-0011.
+- Six validation checks (25 in all) and 20 tests.
+
 ## [0.2.0] - 2026-10-19
 
 Day 2: fees, waterfalls and carried interest as an option.

@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.2.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.3.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -25,7 +25,7 @@ the financial engineering of the asset class over ten days, one part a day.
 |---|---|---|
 | 1 | Cash flows and performance measures: every IRR, MIRR, multiples, the PME family, the J-curve | ✅ v0.1.0 |
 | 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | ✅ v0.2.0 |
-| 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV |  |
+| 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | ✅ v0.3.0 |
 | 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations |  |
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values |  |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies |  |
@@ -83,6 +83,25 @@ The full account is in [cash flows and performance measures](docs/notes/cash-flo
 The full account is in [fees, waterfalls and carried interest](docs/notes/fees-waterfalls-and-carry.md);
 `pmlab fees --waterfall american --recovery 0.5` prints gross to net and the contract's value for
 any terms.
+
+**Day 3: fund cash-flow models and the secondary market.**
+
+- **Takahashi-Alexander, exactly, and made random.** The Yale model's IRR equals its growth rate by
+  identity; the bow changes the multiple (1.40x to 2.44x) but not the IRR. A quarterly stochastic
+  extension adds market beta, own risk, cash-flow noise and appraisal-smoothed NAVs.
+- **Calibration** reproduces Day 1's deal-built funds to 1.1% of commitment, and recovers known
+  parameters without bias from noisy data.
+- **Identical managers, very different funds:** median TVPI 1.49, 21% lose money; 46% of the
+  variance of IRRs lies between vintages. The 95th percentile of first-year calls is 35 per 100
+  against a median of 24.
+- **Secondary pricing.** At a required return equal to the fund's expected return the discount is
+  exactly zero; a buyer wanting 15% pays 71% of NAV in year 2 and 90% in year 5. After a 30% crash a
+  stale NAV turns an 8% discount to true value into a 35% quoted discount, which narrows as
+  appraisals catch up.
+
+![After a market fall, secondary discounts widen because NAVs are stale](docs/images/crash-discount.png)
+
+The full account is in [fund models and secondaries](docs/notes/fund-models-and-secondaries.md).
 
 ## Validation
 
