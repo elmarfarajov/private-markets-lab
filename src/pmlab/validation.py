@@ -13,6 +13,8 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
+from . import fundmodel as fm
+from . import secondary as sec
 from .carry import carry_closed_form, carry_payoff, single_deal_mc, value
 from .cashflows import CashFlows, fund_irr, irr, irr_roots, mirr, multiples, norstrom, periodic_roots, sign_changes
 from .pme import direct_alpha, ks_pme, long_nickels, mpme, pme_plus, report
@@ -288,6 +290,74 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
             abs(z) < 4.0,
         )
 
+    def ta_identity() -> tuple[str, str, str, bool]:
+        worst = 0.0
+        for g in (0.05, 0.13, 0.2):
+            for b in (1.0, 2.5, 5.0):
+                p_ = fm.takahashi_alexander(fm.TAParams(growth=g, bow=b))
+                worst = max(worst, abs(p_.irr() - g), abs(p_.nav[-1]), abs(p_.calls.sum() - 100))
+        return (
+            "Takahashi-Alexander: IRR = G, NAV ends at 0, calls sum to commitment",
+            "9 parameter sets",
+            f"{worst:.1e}",
+            worst < 1e-9,
+        )
+
+    def ta_recovery() -> tuple[str, str, str, bool]:
+        true = fm.TAParams(rc=(0.3, 0.4, 0.5, 1.0), growth=0.09, bow=3.0)
+        f = fm.takahashi_alexander(true).frame()
+        fit = fm.calibrate(f["cum_calls"], f["cum_distributions"], f["nav"], rc_years=3)
+        gap = max(
+            abs(fit.params.growth - 0.09),
+            abs(fit.params.bow - 3.0),
+            max(abs(a - b) for a, b in zip(fit.params.rc, true.rc, strict=True)),
+        )
+        return (
+            "calibration recovers known parameters from noise-free curves",
+            "rc 30/40/50/100%, G 9%, B 3",
+            f"{gap:.1e}",
+            gap < 1e-5,
+        )
+
+    def stochastic_mean() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec(call_noise=0.0, dist_noise=0.0, smoothing=1.0)
+        paths = fm.simulate(spec, 40000 if not fast else 15000, seed=41)
+        t, c, d = fm.expected_path(spec, 0.0, 100.0, 0.0)
+        mc = paths.distributions.mean(axis=0)
+        z = float(
+            np.max(np.abs(mc - d) / (paths.distributions.std(axis=0, ddof=1) / np.sqrt(paths.distributions.shape[0]) + 1e-12))
+        )
+        conserve = float(np.max(np.abs(paths.calls.sum(axis=1) - 100.0)))
+        return (
+            "simulated mean distributions = expected path; calls sum to commitment",
+            "48 quarters",
+            f"max |z| {z:.2f}, calls {conserve:.1e}",
+            z < 4.5 and conserve < 1e-9,
+        )
+
+    def secondary_fair_at_mu() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        worst = max(abs(sec.discount(spec, sec.expected_state(spec, a), spec.mu)) for a in (0.5, 2, 4, 7, 10))
+        return "required return = fund's expected return gives zero discount", "ages 0.5-10", f"{worst:.1e}", worst < 1e-9
+
+    def secondary_mc() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        zs = []
+        for a, r in ((2.0, 0.15), (5.0, 0.13)):
+            st = sec.expected_state(spec, a)
+            m, se = sec.monte_carlo_value(spec, st, r, 20000 if not fast else 8000, seed=int(10 * a))
+            zs.append((m - sec.value(spec, st, r)) / se)
+        w = float(np.max(np.abs(zs)))
+        return "expected-path value against full Monte Carlo", "2 states", f"max |z| {w:.2f}", w < 4.0
+
+    def decomposition_adds_up() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        worst = 0.0
+        for a in (1.0, 3.0, 6.0):
+            d = sec.decompose(spec, sec.expected_state(spec, a), 0.16)
+            worst = max(worst, abs(d.assets + d.unfunded + d.staleness - d.total))
+        return "discount = assets + unfunded + staleness", "3 ages, up-to-date NAV", f"{worst:.1e}", worst < 1e-12
+
     add("IRR", "XIRR, published example", xirr_microsoft)
     add("IRR", "MIRR, published examples", mirr_microsoft)
     add("IRR", "Two IRRs: the pump problem", lorie_savage)
@@ -307,6 +377,12 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("Carry", "Closed form against quadrature", carry_closed_form_vs_quadrature)
     add("Carry", "Closed form against the waterfall engine", carry_engine_vs_formula)
     add("Carry", "LPs lose what the GP gains", risk_neutral_identity)
+    add("Fund model", "Takahashi-Alexander identities", ta_identity)
+    add("Fund model", "Calibration recovers known parameters", ta_recovery)
+    add("Fund model", "Simulation mean matches the expected path", stochastic_mean)
+    add("Secondary", "Fair pricing at the fund's expected return", secondary_fair_at_mu)
+    add("Secondary", "Expected-path value against Monte Carlo", secondary_mc)
+    add("Secondary", "Discount decomposition adds up", decomposition_adds_up)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 
