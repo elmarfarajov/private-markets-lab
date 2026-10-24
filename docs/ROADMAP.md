@@ -9,8 +9,8 @@ examples, independent methods, identities that must hold, and funds whose truth 
 |---|---|---|---|---|
 | 1 | Cash flows and performance measures: every IRR, MIRR, multiples, the PME family, the J-curve | #1 | v0.1.0 | ✅ Done |
 | 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | #2 | v0.2.0 | ✅ Done |
-| 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | #3 | v0.3.0 | Next |
-| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 |  |
+| 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | #3 | v0.3.0 | ✅ Done |
+| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 | Next |
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 |  |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 |  |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 |  |
@@ -60,3 +60,15 @@ is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov
 - **American waterfalls.** The clawback is owed by 82% of funds. A portfolio of options is worth
   4.9 against 0.7 for an option on a portfolio of independent deals.
 - **Sixteen charts, six validation checks, ADRs 0006-0008.**
+
+## Day 3 - fund cash-flow models and the secondary market ✅
+
+**Issue #3, release v0.3.0.**
+
+- **`pmlab.fundmodel`.** Takahashi-Alexander (IRR = G by identity), least-squares calibration, a
+  quarterly stochastic model with market beta, own risk, cash-flow noise and smoothed NAVs, and a
+  vintage study (46% of IRR variance between vintages).
+- **`pmlab.secondary`.** LP interests valued at the buyer's required return; discount zero at the
+  fund's expected return; decomposition into assets, unfunded commitment and staleness; crash
+  dynamics with stale NAVs; buyer IRR distributions.
+- **Sixteen charts, six validation checks, ADRs 0009-0011.**

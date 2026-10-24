@@ -4,8 +4,8 @@ title: "Private Markets Lab: cash flows, fees, fund models, risk and allocation 
 authors:
   - family-names: Farajov
     given-names: Elmar
-version: 0.2.0
-date-released: 2026-10-19
+version: 0.3.0
+date-released: 2026-10-24
 license: MIT
 repository-code: "https://github.com/elmarfarajov/private-markets-lab"
 keywords:
