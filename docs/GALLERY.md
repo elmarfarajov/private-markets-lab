@@ -98,3 +98,69 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![Carry rewards skill](images/carry-delta.png)
 
+## Day 3: Fund cash-flow models and the secondary market
+
+**The Yale model** - Takahashi-Alexander flows, NAV and J-curve.
+
+![The Yale model](images/ta-profile.png)
+
+**Bow, growth and pace** - What each Takahashi-Alexander parameter does.
+
+![Bow, growth and pace](images/ta-sensitivity.png)
+
+**Six parameters reproduce a deal-built fund** - The model fitted to bottom-up deal funds.
+
+![Six parameters reproduce a deal-built fund](images/ta-fit-deals.png)
+
+**Recovering the parameters from noisy data** - Re-estimated growth, bow and call rate.
+
+![Recovering the parameters from noisy data](images/ta-recovery.png)
+
+**One model, many futures** - Fan charts of NAV and cumulative net cash flow.
+
+![One model, many futures](images/stochastic-fan.png)
+
+**The market explains much of a fund's outcome** - TVPI distribution and IRR against the market.
+
+![The market explains much of a fund's outcome](images/fund-outcomes.png)
+
+**Vintage matters** - IRRs of 25 vintages sharing market paths.
+
+![Vintage matters](images/vintage-dispersion.png)
+
+**Plan for the 95th percentile of calls** - Annual capital calls and their tail.
+
+![Plan for the 95th percentile of calls](images/capital-calls.png)
+
+**Reported NAVs lag and understate risk** - True against reported NAV.
+
+![Reported NAVs lag and understate risk](images/nav-smoothing.png)
+
+**Young funds trade at deep discounts** - Secondary discount by fund age and required return.
+
+![Young funds trade at deep discounts](images/discount-by-age.png)
+
+**Secondary pricing in one table** - Discount by age and required return.
+
+![Secondary pricing in one table](images/discount-heatmap.png)
+
+**Where the discount comes from** - Assets against the unfunded commitment.
+
+![Where the discount comes from](images/discount-decomposition.png)
+
+**Stale NAVs widen discounts after a fall** - Discount to reported and true NAV after a 30% fall.
+
+![Stale NAVs widen discounts after a fall](images/crash-discount.png)
+
+**Buying at a discount** - Buyer IRR distributions at three prices.
+
+![Buying at a discount](images/buyer-irr.png)
+
+**A secondary buyer skips the J-curve** - Cumulative cash flow, primary against secondary.
+
+![A secondary buyer skips the J-curve](images/secondary-vs-primary.png)
+
+**The shortcut prices as simulation does** - Expected-path value against Monte Carlo.
+
+![The shortcut prices as simulation does](images/secondary-mc-check.png)
+
