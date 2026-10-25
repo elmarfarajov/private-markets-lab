@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.3.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.4.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -26,7 +26,7 @@ the financial engineering of the asset class over ten days, one part a day.
 | 1 | Cash flows and performance measures: every IRR, MIRR, multiples, the PME family, the J-curve | ✅ v0.1.0 |
 | 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | ✅ v0.2.0 |
 | 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | ✅ v0.3.0 |
-| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations |  |
+| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | ✅ v0.4.0 |
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values |  |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies |  |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas |  |
@@ -103,6 +103,25 @@ any terms.
 
 The full account is in [fund models and secondaries](docs/notes/fund-models-and-secondaries.md).
 
+**Day 4: venture capital, preferred stock as options.**
+
+- **The exit waterfall with conversion as an equilibrium.** Liquidation preferences by seniority,
+  multiples, participation with caps, cumulative dividends; each preferred class converts only when
+  that pays more, found by best response rather than a fixed order.
+- **The option-pricing method, integrated exactly.** Each class's piecewise-linear payoff is
+  integrated against the lognormal density in closed form, checked against Black-Scholes and Monte
+  Carlo. The latest round is backsolved to find what the company is worth.
+- **A $3.0bn post-money is worth $1.80bn:** an overstatement of 66.6%, with common worth $16.80
+  against the round's $30. A 2x preference raises the overstatement to 218%; all rounds pari passu
+  lower it to 51%. It peaks near 79% at 60-70% volatility and falls from 128% at one year to exit to
+  23% at ten.
+- **200 random cap tables:** median overstatement 61% (range 23% to 295%), doubled by a multiple
+  above 1x or by participation.
+
+![Fair value and post-money for the stylised company](docs/images/vc-post-vs-fair.png)
+
+The full account is in [venture capital as options](docs/notes/venture-capital-options.md).
+
 ## Validation
 
 `pmlab validate` holds every measure to a published value, an independent method, or an identity
@@ -119,6 +138,8 @@ that must hold. A selection:
 | Waterfall | LP + GP flows equal the deals' flows, 8,000 funds | 1.1e-13 |
 | Carry | Black-Scholes call spread against Monte Carlo through the waterfall | max \|z\| 1.08 |
 | Carry | closed form against quadrature of the payoff | 1.5e-8 |
+| Venture OPM | one preferred class against Black-Scholes | 3e-7 |
+| Venture waterfall | payouts add to the exit value; no class gains by switching | 4e-16; 0 |
 
 ## Quickstart
 

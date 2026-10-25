@@ -20,6 +20,7 @@ DAYS: dict[int, str] = {
     1: "Cash flows and performance measures",
     2: "Fees, waterfalls and carried interest as an option",
     3: "Fund cash-flow models and the secondary market",
+    4: "Venture capital: preferred stock as options",
 }
 
 
@@ -40,6 +41,7 @@ def items() -> tuple[Item, ...]:
     # imported here so that the package imports without the charts' own dependencies being loaded
     from . import cashflows, fees
     from . import fundmodels as fm
+    from . import venture as vc
 
     return (
         Item(
@@ -279,6 +281,57 @@ def items() -> tuple[Item, ...]:
             fm.mc_check,
             3,
         ),
+        Item("vc-waterfall.png", "Who gets what at exit", "Payout to each class by exit value.", vc.waterfall, 4),
+        Item(
+            "vc-conversion.png",
+            "Conversion one class at a time",
+            "Exit values at which each class converts.",
+            vc.conversion_map,
+            4,
+        ),
+        Item(
+            "vc-options.png",
+            "Series D: a floor plus a call",
+            "Option decomposition of Series D and common.",
+            vc.option_decomposition,
+            4,
+        ),
+        Item(
+            "vc-post-vs-fair.png",
+            "Post-money against fair value",
+            "Fair company value and value per share by class.",
+            vc.post_vs_fair,
+            4,
+        ),
+        Item(
+            "vc-sensitivity.png",
+            "Volatility and time to exit",
+            "Overvaluation against volatility and years to exit.",
+            vc.sensitivity,
+            4,
+        ),
+        Item("vc-terms.png", "Investor-friendly terms", "Overvaluation under different Series D terms.", vc.term_effects, 4),
+        Item("vc-backsolve.png", "Backsolving the round", "Value per share against company value.", vc.backsolve_curve, 4),
+        Item("vc-common.png", "Common stock value", "Fair value of a common share against years to exit.", vc.common_value, 4),
+        Item(
+            "vc-sample.png",
+            "A sample of stylised unicorns",
+            "Distribution of overvaluation and common discount.",
+            vc.sample_distribution,
+            4,
+        ),
+        Item(
+            "vc-drivers.png",
+            "What drives the overstatement",
+            "Overvaluation by the latest round's terms and size.",
+            vc.sample_drivers,
+            4,
+        ),
+        Item("vc-down-round.png", "Up and down rounds", "Post-money and fair value against the round price.", vc.down_round, 4),
+        Item("vc-protection.png", "The value of protection", "Series D against its common equivalent.", vc.protection_value, 4),
+        Item("vc-opm-check.png", "OPM against Monte Carlo", "Exact integral against simulation.", vc.opm_vs_mc, 4),
+        Item("vc-exit-distribution.png", "Different bets", "Exit multiples of Series D and common.", vc.exit_distribution, 4),
+        Item("vc-breakpoints.png", "Breakpoints", "Each class's share of the marginal pound.", vc.breakpoint_table, 4),
     )
 
 

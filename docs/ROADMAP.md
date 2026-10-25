@@ -10,8 +10,8 @@ examples, independent methods, identities that must hold, and funds whose truth 
 | 1 | Cash flows and performance measures: every IRR, MIRR, multiples, the PME family, the J-curve | #1 | v0.1.0 | ✅ Done |
 | 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | #2 | v0.2.0 | ✅ Done |
 | 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | #3 | v0.3.0 | ✅ Done |
-| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 | Next |
-| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 |  |
+| 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 | ✅ Done |
+| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 | Next |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 |  |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 |  |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | #8 | v0.8.0 |  |
@@ -72,3 +72,16 @@ is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov
   fund's expected return; decomposition into assets, unfunded commitment and staleness; crash
   dynamics with stale NAVs; buyer IRR distributions.
 - **Sixteen charts, six validation checks, ADRs 0009-0011.**
+
+## Day 4 - venture capital: preferred stock as options ✅
+
+**Issue #4, release v0.4.0.**
+
+- **`pmlab.venture`.** Securities with preference multiples, seniority, participation, caps and
+  cumulative dividends; the exit waterfall with conversion as a best-response equilibrium; the OPM
+  integrated exactly over the piecewise-linear payoff; the backsolve; Monte Carlo with a control
+  variate; random cap tables.
+- **Findings.** The stylised $3.0bn company is worth $1.80bn (66.6% overstated); common is worth 56%
+  of the round price. Terms move the overstatement from 51% (all pari passu) to 218% (2x). It does
+  not depend on the round price when the latest class is senior. 200 random companies: median 61%.
+- **Fifteen charts, six validation checks, ADRs 0012-0014.**

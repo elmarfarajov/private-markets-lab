@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-10-25
+
+Day 4: venture capital, preferred stock as a portfolio of options.
+
+### Added
+
+- **`pmlab.venture`**: `Security` and `CapTable` (preference multiple, seniority, participation and
+  cap, cumulative dividend, conversion ratio); the exit waterfall with conversion found as a
+  best-response equilibrium; `Payoffs`, the option-pricing method integrated exactly over the
+  piecewise-linear payoff; `backsolve` of the latest round; Monte Carlo with the exit value as a
+  control variate; random cap tables and an overvaluation sample.
+- Fifteen charts, the Day 4 note, ADRs 0012-0014.
+- Six validation checks (31 in all) and 17 tests.
+
 ## [0.3.0] - 2026-10-24
 
 Day 3: fund cash-flow models and the secondary market.

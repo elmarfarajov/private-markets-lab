@@ -13,3 +13,6 @@
 | [0009](0009-takahashi-alexander-is-the-skeleton-randomised-not-replaced.md) | Takahashi-Alexander is the skeleton of the fund model, made random rather than replaced | Accepted |
 | [0010](0010-secondaries-are-priced-from-the-buyers-required-return.md) | Secondaries are priced from the buyer's required return, on the true value, with staleness separated | Accepted |
 | [0011](0011-vintage-study-shares-market-paths.md) | Vintage dispersion is measured with funds that share a market path | Accepted |
+| [0012](0012-conversion-is-a-best-response-equilibrium.md) | Conversion is decided as a best-response equilibrium, not by a formula | Accepted |
+| [0013](0013-the-opm-integrates-the-piecewise-linear-payoff-exactly.md) | The OPM integrates the piecewise-linear payoff exactly; Monte Carlo is the check | Accepted |
+| [0014](0014-fair-value-is-backsolved-from-the-latest-round.md) | Fair value is backsolved from the latest round; overstatement is post-money over fair value | Accepted |

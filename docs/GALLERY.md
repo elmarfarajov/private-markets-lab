@@ -164,3 +164,65 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![The shortcut prices as simulation does](images/secondary-mc-check.png)
 
+## Day 4: Venture capital: preferred stock as options
+
+**Who gets what at exit** - Payout to each class by exit value.
+
+![Who gets what at exit](images/vc-waterfall.png)
+
+**Conversion one class at a time** - Exit values at which each class converts.
+
+![Conversion one class at a time](images/vc-conversion.png)
+
+**Series D: a floor plus a call** - Option decomposition of Series D and common.
+
+![Series D: a floor plus a call](images/vc-options.png)
+
+**Post-money against fair value** - Fair company value and value per share by class.
+
+![Post-money against fair value](images/vc-post-vs-fair.png)
+
+**Volatility and time to exit** - Overvaluation against volatility and years to exit.
+
+![Volatility and time to exit](images/vc-sensitivity.png)
+
+**Investor-friendly terms** - Overvaluation under different Series D terms.
+
+![Investor-friendly terms](images/vc-terms.png)
+
+**Backsolving the round** - Value per share against company value.
+
+![Backsolving the round](images/vc-backsolve.png)
+
+**Common stock value** - Fair value of a common share against years to exit.
+
+![Common stock value](images/vc-common.png)
+
+**A sample of stylised unicorns** - Distribution of overvaluation and common discount.
+
+![A sample of stylised unicorns](images/vc-sample.png)
+
+**What drives the overstatement** - Overvaluation by the latest round's terms and size.
+
+![What drives the overstatement](images/vc-drivers.png)
+
+**Up and down rounds** - Post-money and fair value against the round price.
+
+![Up and down rounds](images/vc-down-round.png)
+
+**The value of protection** - Series D against its common equivalent.
+
+![The value of protection](images/vc-protection.png)
+
+**OPM against Monte Carlo** - Exact integral against simulation.
+
+![OPM against Monte Carlo](images/vc-opm-check.png)
+
+**Different bets** - Exit multiples of Series D and common.
+
+![Different bets](images/vc-exit-distribution.png)
+
+**Breakpoints** - Each class's share of the marginal pound.
+
+![Breakpoints](images/vc-breakpoints.png)
+
