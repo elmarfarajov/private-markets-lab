@@ -58,12 +58,14 @@ def test_market_files_round_trip(tmp_path):
 
 
 def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatch):
-    from pmlab.gallery import fees, fundmodels
+    from pmlab.gallery import fees, fundmodels, venture
 
     monkeypatch.setattr(fees, "SIMS", 600)  # the charts' Monte Carlo, at a size a test can afford
     monkeypatch.setattr(fundmodels, "SIMS", 400)
+    monkeypatch.setattr(venture, "SIMS", 12)
     caches = [fees._value, fees._vega, fees._revenue, fees._alpha_curves]
-    caches += [getattr(fundmodels, n) for n in dir(fundmodels) if hasattr(getattr(fundmodels, n), "cache_clear")]
+    for mod in (fundmodels, venture):
+        caches += [getattr(mod, n) for n in dir(mod) if hasattr(getattr(mod, n), "cache_clear")]
     for cached in caches:
         cached.cache_clear()
     names = [i.filename for i in gallery.items()]
