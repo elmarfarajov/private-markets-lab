@@ -12,9 +12,11 @@ from datetime import date
 
 import numpy as np
 import pandas as pd
+from scipy.stats import norm
 
 from . import fundmodel as fm
 from . import secondary as sec
+from . import venture as vc
 from .carry import carry_closed_form, carry_payoff, single_deal_mc, value
 from .cashflows import CashFlows, fund_irr, irr, irr_roots, mirr, multiples, norstrom, periodic_roots, sign_changes
 from .pme import direct_alpha, ks_pme, long_nickels, mpme, pme_plus, report
@@ -358,6 +360,71 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
             worst = max(worst, abs(d.assets + d.unfunded + d.staleness - d.total))
         return "discount = assets + unfunded + staleness", "3 ages, up-to-date NAV", f"{worst:.1e}", worst < 1e-12
 
+    def vc_conservation() -> tuple[str, str, str, bool]:
+        rng = np.random.default_rng(51)
+        worst = 0.0
+        for _ in range(40 if not fast else 15):
+            t = vc.random_company(rng)
+            for v in rng.uniform(0, 3 * t.post_money(), 8):
+                worst = max(worst, abs(float(vc.payoff(t, float(v))[0].sum()) - v) / max(v, 1.0))
+        return "waterfall pays out exactly the exit value", "random cap tables, 8 exits each", f"{worst:.1e}", worst < 1e-10
+
+    def vc_equilibrium() -> tuple[str, str, str, bool]:
+        rng = np.random.default_rng(52)
+        worst = 0.0
+        for _ in range(30 if not fast else 10):
+            t = vc.random_company(rng)
+            for v in rng.uniform(0, 3 * t.post_money(), 6):
+                pay, conv = vc.payoff(t, float(v))
+                for i, sec_ in enumerate(t.securities):
+                    if sec_.preferred:
+                        flipped = list(conv)
+                        flipped[i] = not flipped[i]
+                        worst = max(worst, float(vc._distribute(t, float(v), flipped)[i] - pay[i]) / max(float(v), 1.0))
+        return "no class gains by switching its conversion choice", "random cap tables", f"best gain {worst:.1e}", worst < 1e-9
+
+    def vc_closed_form() -> tuple[str, str, str, bool]:
+        # common 80m and one 1x preferred class of 20m shares at $5: payoff V - C(100) + 0.2 C(500)
+        t = vc.CapTable((vc.Security("Common", 80.0), vc.Security("Pref", 20.0, 5.0, seniority=1)))
+        v0, sig, yrs, r = 400.0, 0.8, 5.0, 0.03
+
+        def call(k: float) -> float:
+            f, s = v0 * np.exp(r * yrs), sig * np.sqrt(yrs)
+            d1 = (np.log(f / k) + 0.5 * s * s) / s
+            return float(np.exp(-r * yrs) * (f * norm.cdf(d1) - k * norm.cdf(d1 - s)))
+
+        exact = v0 - call(100.0) + 0.2 * call(500.0)
+        opm = float(vc.Payoffs.build(t, points=3000).value(v0, sig, yrs, r)[1])
+        gap = abs(opm / exact - 1)
+        return f"{exact:.4f} (Black-Scholes: V - C(100) + 0.2 C(500))", f"{opm:.4f}", f"{gap:.1e}", gap < 1e-4
+
+    def vc_common_limit() -> tuple[str, str, str, bool]:
+        # with no preference at all every share is common and worth v0 / shares
+        t = vc.example({n: {"multiple": 0.0} for n in ("Series A", "Series B", "Series C", "Series D")})
+        vals = vc.Payoffs.build(t, points=800).value(1000.0, 0.9, 4.0, 0.04)
+        shares = np.array([s.shares for s in t.securities])
+        gap = float(np.max(np.abs(vals / shares - 10.0)))
+        return "no preferences: every share worth company / shares", "$10.00 a share", f"{gap:.1e}", gap < 1e-6
+
+    def vc_backsolve() -> tuple[str, str, str, bool]:
+        t = vc.example()
+        f = vc.backsolve(t)
+        price_gap = abs(f.per_share[-1] - 30.0)
+        sum_gap = abs(float(f.values.sum()) / f.company - 1)
+        return (
+            "latest class worth its price; class values add to the company",
+            f"${f.per_share[-1]:.6f}; ${f.company:,.1f}m",
+            f"{price_gap:.1e}, {sum_gap:.1e}",
+            price_gap < 1e-6 and sum_gap < 1e-4,
+        )
+
+    def vc_monte_carlo() -> tuple[str, str, str, bool]:
+        t = vc.example()
+        f = vc.backsolve(t)
+        m, se = vc.monte_carlo(t, f.company, 0.9, 4.0, 0.04, paths=20000 if not fast else 6000, seed=53)
+        z = float(np.max(np.abs((m - f.values) / se)))
+        return "exact OPM integral against Monte Carlo", "6 classes", f"max |z| {z:.2f}", z < 4.0
+
     add("IRR", "XIRR, published example", xirr_microsoft)
     add("IRR", "MIRR, published examples", mirr_microsoft)
     add("IRR", "Two IRRs: the pump problem", lorie_savage)
@@ -383,6 +450,12 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("Secondary", "Fair pricing at the fund's expected return", secondary_fair_at_mu)
     add("Secondary", "Expected-path value against Monte Carlo", secondary_mc)
     add("Secondary", "Discount decomposition adds up", decomposition_adds_up)
+    add("Venture", "Waterfall pays out the exit value", vc_conservation)
+    add("Venture", "Conversion is an equilibrium", vc_equilibrium)
+    add("Venture", "One preferred class: closed form", vc_closed_form)
+    add("Venture", "No preferences: all shares equal", vc_common_limit)
+    add("Venture", "Backsolve prices the latest round", vc_backsolve)
+    add("Venture", "OPM integral against Monte Carlo", vc_monte_carlo)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 
