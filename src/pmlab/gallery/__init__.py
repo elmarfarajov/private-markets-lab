@@ -21,6 +21,7 @@ DAYS: dict[int, str] = {
     2: "Fees, waterfalls and carried interest as an option",
     3: "Fund cash-flow models and the secondary market",
     4: "Venture capital: preferred stock as options",
+    5: "Nowcasting fund values: the Kalman filter",
 }
 
 
@@ -41,6 +42,7 @@ def items() -> tuple[Item, ...]:
     # imported here so that the package imports without the charts' own dependencies being loaded
     from . import cashflows, fees
     from . import fundmodels as fm
+    from . import nowcast as nc
     from . import venture as vc
 
     return (
@@ -332,6 +334,22 @@ def items() -> tuple[Item, ...]:
         Item("vc-opm-check.png", "OPM against Monte Carlo", "Exact integral against simulation.", vc.opm_vs_mc, 4),
         Item("vc-exit-distribution.png", "Different bets", "Exit multiples of Series D and common.", vc.exit_distribution, 4),
         Item("vc-breakpoints.png", "Breakpoints", "Each class's share of the marginal pound.", vc.breakpoint_table, 4),
+        Item("nc-one-fund.png", "One fund through a crash", "True value, reported NAV and the Kalman nowcast.", nc.one_fund, 5),
+        Item("nc-crash.png", "Errors after a crash", "Mean error of four estimates around a market fall.", nc.crash, 5),
+        Item("nc-errors.png", "Error by fund age", "RMSE of four estimates of the true value.", nc.errors_by_age, 5),
+        Item("nc-coverage.png", "Coverage", "Actual against nominal coverage of the filter's intervals.", nc.coverage, 5),
+        Item("nc-recovery.png", "Parameter recovery", "Maximum-likelihood estimates across panels.", nc.recovery, 5),
+        Item("nc-panel-size.png", "How many funds", "Spread of the beta estimate by panel size.", nc.panel_size, 5),
+        Item("nc-beta.png", "Beta from reported NAVs", "Naive, Dimson and state-space betas by smoothing.", nc.beta_bias, 5),
+        Item(
+            "nc-noise-grid.png",
+            "When filtering helps",
+            "Filter error over reported error by smoothing and noise.",
+            nc.noise_grid,
+            5,
+        ),
+        Item("nc-misspecified.png", "Wrong parameters", "Filter error with the wrong smoothing or beta.", nc.misspecified, 5),
+        Item("nc-gain.png", "Weight on each report", "The filter's weight on the new reported NAV.", nc.gain, 5),
     )
 
 
