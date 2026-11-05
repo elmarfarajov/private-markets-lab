@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-11-06
+
+Day 5: nowcasting fund values from stale, noisy NAVs with the Kalman filter.
+
+### Added
+
+- **`pmlab.nowcast`**: `appraise` (partial adjustment with appraisal noise), `Params` (and the true
+  parameters of the Day 3 simulator), `Data`, a moment-matched Kalman filter over many funds at once,
+  the Rauch-Tung-Striebel smoother, pooled maximum-likelihood estimation, reported returns, naive and
+  Dimson betas, the market roll-forward shortcut and error measures with a size floor.
+- Ten charts, the Day 5 note, ADRs 0015-0016.
+- Four validation checks (35 in all) and 11 tests.
+
 ## [0.4.0] - 2026-10-25
 
 Day 4: venture capital, preferred stock as a portfolio of options.
