@@ -11,8 +11,8 @@ examples, independent methods, identities that must hold, and funds whose truth 
 | 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | #2 | v0.2.0 | ✅ Done |
 | 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | #3 | v0.3.0 | ✅ Done |
 | 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 | ✅ Done |
-| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 | Next |
-| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 |  |
+| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 | ✅ Done |
+| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 | Next |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 |  |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | #8 | v0.8.0 |  |
 | 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk | #9 | v0.9.0 |  |
@@ -85,3 +85,15 @@ is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov
   of the round price. Terms move the overstatement from 51% (all pari passu) to 218% (2x). It does
   not depend on the round price when the latest class is senior. 200 random companies: median 61%.
 - **Fifteen charts, six validation checks, ADRs 0012-0014.**
+
+## Day 5 - nowcasting fund values with the Kalman filter ✅
+
+**Issue #5, release v0.5.0.**
+
+- **`pmlab.nowcast`.** Noisy partial-adjustment appraisals; a moment-matched Kalman filter for a
+  fund's true value driven by the market and its cash flows; the RTS smoother; pooled maximum
+  likelihood; the naive, Dimson and roll-forward shortcuts.
+- **Findings.** Error 14.2% (reported) against 10.5% (filter) and 8.1% (smoother); honest 90%
+  intervals; parameters recovered from panels, not from single funds; reported-NAV betas biased
+  to about a x beta.
+- **Ten charts, four validation checks, ADRs 0015-0016.**

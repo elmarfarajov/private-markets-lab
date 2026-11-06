@@ -16,3 +16,5 @@
 | [0012](0012-conversion-is-a-best-response-equilibrium.md) | Conversion is decided as a best-response equilibrium, not by a formula | Accepted |
 | [0013](0013-the-opm-integrates-the-piecewise-linear-payoff-exactly.md) | The OPM integrates the piecewise-linear payoff exactly; Monte Carlo is the check | Accepted |
 | [0014](0014-fair-value-is-backsolved-from-the-latest-round.md) | Fair value is backsolved from the latest round; overstatement is post-money over fair value | Accepted |
+| [0015](0015-nav-nowcasting-is-a-state-space-model-with-noisy-appraisals.md) | NAV nowcasting is a state-space model with noisy, partial-adjustment appraisals | Accepted |
+| [0016](0016-parameters-are-estimated-on-panels-and-errors-scored-above-a-floor.md) | Parameters are estimated on panels of funds, and errors are scored above a size floor | Accepted |

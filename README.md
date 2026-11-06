@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.4.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.5.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -27,7 +27,7 @@ the financial engineering of the asset class over ten days, one part a day.
 | 2 | Fees, waterfalls and carried interest as an option: European and American carry, hurdle, catch-up, clawback, Metrick-Yasuda | ✅ v0.2.0 |
 | 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | ✅ v0.3.0 |
 | 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | ✅ v0.4.0 |
-| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values |  |
+| 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | ✅ v0.5.0 |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies |  |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas |  |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming |  |
@@ -121,6 +121,24 @@ The full account is in [fund models and secondaries](docs/notes/fund-models-and-
 ![Fair value and post-money for the stylised company](docs/images/vc-post-vs-fair.png)
 
 The full account is in [venture capital as options](docs/notes/venture-capital-options.md).
+
+**Day 5: nowcasting fund values with the Kalman filter.**
+
+- **A state-space model of a fund's true value** driven by the market and its cash flows, observed
+  through slow, noisy appraisals; a moment-matched Kalman filter, the RTS smoother and pooled
+  maximum likelihood.
+- **Error against the true value:** reported NAV 14.2%, filter 10.5%, smoother 8.1%; the market
+  roll-forward shortcut 19.2%. After a 25% market fall reported NAVs overstate by 20%, the filter
+  by 1%.
+- **Honest error bars and recoverable parameters:** 90% intervals cover 90.2%; panels of 100 funds
+  recover the appraisal speed and beta (0.399 and 1.198 against 0.40 and 1.20). One fund alone does
+  not.
+- **Betas from reported NAVs are too low** (0.51 against 1.2); Dimson lags overshoot (1.36); the
+  state-space model gives 1.21.
+
+![After a crash, reported NAVs overstate; the filter does not](docs/images/nc-crash.png)
+
+The full account is in [nowcasting fund values](docs/notes/nowcasting-fund-values.md).
 
 ## Validation
 

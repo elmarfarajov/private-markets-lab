@@ -226,3 +226,45 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![Breakpoints](images/vc-breakpoints.png)
 
+## Day 5: Nowcasting fund values: the Kalman filter
+
+**One fund through a crash** - True value, reported NAV and the Kalman nowcast.
+
+![One fund through a crash](images/nc-one-fund.png)
+
+**Errors after a crash** - Mean error of four estimates around a market fall.
+
+![Errors after a crash](images/nc-crash.png)
+
+**Error by fund age** - RMSE of four estimates of the true value.
+
+![Error by fund age](images/nc-errors.png)
+
+**Coverage** - Actual against nominal coverage of the filter's intervals.
+
+![Coverage](images/nc-coverage.png)
+
+**Parameter recovery** - Maximum-likelihood estimates across panels.
+
+![Parameter recovery](images/nc-recovery.png)
+
+**How many funds** - Spread of the beta estimate by panel size.
+
+![How many funds](images/nc-panel-size.png)
+
+**Beta from reported NAVs** - Naive, Dimson and state-space betas by smoothing.
+
+![Beta from reported NAVs](images/nc-beta.png)
+
+**When filtering helps** - Filter error over reported error by smoothing and noise.
+
+![When filtering helps](images/nc-noise-grid.png)
+
+**Wrong parameters** - Filter error with the wrong smoothing or beta.
+
+![Wrong parameters](images/nc-misspecified.png)
+
+**Weight on each report** - The filter's weight on the new reported NAV.
+
+![Weight on each report](images/nc-gain.png)
+

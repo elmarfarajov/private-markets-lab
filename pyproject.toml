@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pmlab"
-version = "0.4.0"
+version = "0.5.0"
 description = "Private markets and alternative investments: fund cash flows, fees, models, risk and allocation, each measure held to an independent reference."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -58,6 +58,8 @@ ignore = ["E731"]
 "src/pmlab/gallery/fees.py" = ["E501"]
 "src/pmlab/gallery/fundmodels.py" = ["E501"]
 "src/pmlab/gallery/venture.py" = ["E501"]
+"src/pmlab/gallery/nowcast.py" = ["E501"]
+"src/pmlab/nowcast.py" = ["E501"]
 "src/pmlab/venture.py" = ["E501"]
 
 [tool.mypy]
@@ -71,8 +73,8 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 # chart code: matplotlib and numpy stubs are looser than the code
-module = ["pmlab.gallery.venture"]
-disable_error_code = ["call-overload", "arg-type", "assignment", "misc", "operator"]
+module = ["pmlab.gallery.venture", "pmlab.gallery.nowcast"]
+disable_error_code = ["call-overload", "arg-type", "assignment", "misc", "operator", "index"]
 
 [tool.coverage.run]
 source = ["pmlab"]

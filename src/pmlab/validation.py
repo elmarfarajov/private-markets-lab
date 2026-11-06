@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 
 import numpy as np
@@ -15,6 +15,7 @@ import pandas as pd
 from scipy.stats import norm
 
 from . import fundmodel as fm
+from . import nowcast as nc
 from . import secondary as sec
 from . import venture as vc
 from .carry import carry_closed_form, carry_payoff, single_deal_mc, value
@@ -425,6 +426,59 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
         z = float(np.max(np.abs((m - f.values) / se)))
         return "exact OPM integral against Monte Carlo", "6 classes", f"max |z| {z:.2f}", z < 4.0
 
+    def nc_exact_limit() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        p = fm.simulate(spec, 300, seed=61)
+        d = nc.Data.from_paths(p, a=1.0, noise=0.0, seed=62)
+        par = replace(nc.Params.from_spec(spec), a=1.0, obs=1e-9)
+        v = p.value[:, : d.shape[1]]
+        gap = float(np.nanmax(np.abs(nc.errors(nc.kalman(d, par).mean, v, skip=0))))
+        return "no smoothing, no noise: the filter returns the true value", "300 funds", f"{gap:.1e}", gap < 1e-6
+
+    def nc_coverage() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        p = fm.simulate(spec, 1500 if not fast else 500, seed=63)
+        d = nc.Data.from_paths(p, seed=64)
+        fl = nc.kalman(d, nc.Params.from_spec(spec))
+        v = p.value[:, : d.shape[1]]
+        z = ((v - fl.mean) / np.sqrt(fl.var))[:, 4:]
+        z = z[np.isfinite(z)]
+        cover = float(np.mean(np.abs(z) < 1.6449))
+        return (
+            "90% filter intervals cover the true value 90% of the time",
+            f"{z.size:,} fund-quarters",
+            f"{100 * cover:.1f}%",
+            0.88 < cover < 0.92,
+        )
+
+    def nc_recovery() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        p = fm.simulate(spec, 200, seed=65, market_shocks=np.random.default_rng(66).standard_normal(48))
+        e = nc.estimate(nc.Data.from_paths(p, seed=67)).params
+        ok = abs(e.a - 0.4) < 0.05 and abs(e.beta - 1.2) < 0.15 and abs(e.obs - 0.05) < 0.01
+        return (
+            "maximum likelihood recovers a = 0.4, beta = 1.2, noise 5%",
+            "200 funds, one market path",
+            f"a {e.a:.3f}, beta {e.beta:.3f}, noise {e.obs:.3f}",
+            ok,
+        )
+
+    def nc_smoother() -> tuple[str, str, str, bool]:
+        spec = fm.StochasticSpec()
+        p = fm.simulate(spec, 1000 if not fast else 300, seed=68)
+        d = nc.Data.from_paths(p, seed=69)
+        fl = nc.kalman(d, nc.Params.from_spec(spec))
+        ms, _ = nc.smooth(fl)
+        v = p.value[:, : d.shape[1]]
+        end = float(np.max(np.abs(ms[:, -1] - fl.mean[:, -1])))
+        ef, es = nc.rmse(nc.errors(fl.mean, v)), nc.rmse(nc.errors(ms, v))
+        return (
+            "smoother equals the filter at the end and is more accurate before",
+            "RTS smoother",
+            f"RMSE {100 * es:.1f}% vs {100 * ef:.1f}%; end gap {end:.0e}",
+            bool(end < 1e-12 and es < ef),
+        )
+
     add("IRR", "XIRR, published example", xirr_microsoft)
     add("IRR", "MIRR, published examples", mirr_microsoft)
     add("IRR", "Two IRRs: the pump problem", lorie_savage)
@@ -456,6 +510,10 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("Venture", "No preferences: all shares equal", vc_common_limit)
     add("Venture", "Backsolve prices the latest round", vc_backsolve)
     add("Venture", "OPM integral against Monte Carlo", vc_monte_carlo)
+    add("Nowcast", "Exact in the no-smoothing limit", nc_exact_limit)
+    add("Nowcast", "Interval coverage", nc_coverage)
+    add("Nowcast", "Parameters recovered", nc_recovery)
+    add("Nowcast", "Smoother against filter", nc_smoother)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 
