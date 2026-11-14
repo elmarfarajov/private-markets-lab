@@ -17,6 +17,7 @@ from scipy.stats import norm
 from . import fundmodel as fm
 from . import nowcast as nc
 from . import secondary as sec
+from . import smoothing as sm
 from . import venture as vc
 from .carry import carry_closed_form, carry_payoff, single_deal_mc, value
 from .cashflows import CashFlows, fund_irr, irr, irr_roots, mirr, multiples, norstrom, periodic_roots, sign_changes
@@ -479,6 +480,45 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
             bool(end < 1e-12 and es < ef),
         )
 
+    def sm_geltner_exact() -> tuple[str, str, str, bool]:
+        rng = np.random.default_rng(71)
+        true = pd.Series(rng.normal(0.02, 0.1, 400))
+        obs = true.copy()
+        for t in range(1, 400):
+            obs.iloc[t] = 0.3 * true.iloc[t] + 0.7 * obs.iloc[t - 1]
+        g, _ = sm.geltner(obs, a=0.3)
+        gap = float((g - true.iloc[1:]).abs().max())
+        return "Geltner with the true a inverts partial adjustment exactly", "400 periods, a = 0.3", f"{gap:.1e}", gap < 1e-12
+
+    def sm_glm_recovery() -> tuple[str, str, str, bool]:
+        rng = np.random.default_rng(72)
+        n = 4000 if not fast else 2000
+        e = rng.normal(0.0, 0.1, n + 2)
+        theta = np.array([0.5, 0.3, 0.2])
+        obs = pd.Series(0.01 + theta[0] * e[2:] + theta[1] * e[1:-1] + theta[2] * e[:-2])
+        fit = sm.glm(obs, 2)
+        gap = float(np.max(np.abs(fit.theta - theta)))
+        return (
+            "GLM recovers planted weights 0.5, 0.3, 0.2",
+            f"{n} periods",
+            f"{', '.join(f'{x:.3f}' for x in fit.theta)}",
+            gap < 0.03 and abs(fit.sigma - 0.1) < 0.005,
+        )
+
+    def sm_index_identity() -> tuple[str, str, str, bool]:
+        ix = sm.build_index(vintages=12, funds=10, a=1.0, noise=0.0, seed=73)
+        gap = float((ix.true - ix.reported).abs().max())
+        return "no smoothing and no noise: reported index = true index", "12 vintages", f"{gap:.1e}", gap < 1e-12
+
+    def sm_glm_identity() -> tuple[str, str, str, bool]:
+        ix = sm.build_index(seed=74)
+        fit = sm.glm(ix.reported, 2)
+        e = fit.true.to_numpy() - fit.mu
+        rebuilt = fit.mu + fit.theta[0] * e + fit.theta[1] * np.r_[0.0, e[:-1]] + fit.theta[2] * np.r_[0.0, 0.0, e[:-2]]
+        gap = float(np.max(np.abs(rebuilt - ix.reported.to_numpy())))
+        ok = gap < 1e-12 and abs(fit.theta.sum() - 1.0) < 1e-12
+        return "GLM weights sum to one and re-smooth to the reported series", "model index", f"{gap:.1e}", ok
+
     add("IRR", "XIRR, published example", xirr_microsoft)
     add("IRR", "MIRR, published examples", mirr_microsoft)
     add("IRR", "Two IRRs: the pump problem", lorie_savage)
@@ -514,6 +554,10 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("Nowcast", "Interval coverage", nc_coverage)
     add("Nowcast", "Parameters recovered", nc_recovery)
     add("Nowcast", "Smoother against filter", nc_smoother)
+    add("Smoothing", "Geltner inverts partial adjustment", sm_geltner_exact)
+    add("Smoothing", "GLM recovers planted weights", sm_glm_recovery)
+    add("Smoothing", "Index identity without smoothing", sm_index_identity)
+    add("Smoothing", "GLM re-smooths to the data", sm_glm_identity)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 
