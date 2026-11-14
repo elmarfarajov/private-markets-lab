@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-14
+
+Day 6: smoothed returns and the risk they hide.
+
+### Added
+
+- **`pmlab.smoothing`**: `build_index` (model funds of many vintages sharing a public and a private
+  factor, aggregated at true value and at reported NAV), Geltner unsmoothing, GLM maximum likelihood
+  with weights summing to one, partial-adjustment weights, risk tables, horizon correlations and
+  maximum-Sharpe weights.
+- Ten charts, the Day 6 note, ADR 0017.
+- Four validation checks (39 in all) and 9 tests.
+
 ## [0.5.0] - 2026-11-06
 
 Day 5: nowcasting fund values from stale, noisy NAVs with the Kalman filter.

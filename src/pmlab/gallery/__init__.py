@@ -22,6 +22,7 @@ DAYS: dict[int, str] = {
     3: "Fund cash-flow models and the secondary market",
     4: "Venture capital: preferred stock as options",
     5: "Nowcasting fund values: the Kalman filter",
+    6: "Smoothed returns and hidden risk",
 }
 
 
@@ -43,6 +44,7 @@ def items() -> tuple[Item, ...]:
     from . import cashflows, fees
     from . import fundmodels as fm
     from . import nowcast as nc
+    from . import smoothed as sm
     from . import venture as vc
 
     return (
@@ -350,6 +352,24 @@ def items() -> tuple[Item, ...]:
         ),
         Item("nc-misspecified.png", "Wrong parameters", "Filter error with the wrong smoothing or beta.", nc.misspecified, 5),
         Item("nc-gain.png", "Weight on each report", "The filter's weight on the new reported NAV.", nc.gain, 5),
+        Item("sm-paths.png", "True and reported index", "Growth of the index at true value and reported NAV.", sm.paths, 6),
+        Item(
+            "sm-autocorrelation.png",
+            "Autocorrelation",
+            "Autocorrelation of true and reported index returns.",
+            sm.autocorrelation,
+            6,
+        ),
+        Item("sm-risk.png", "Hidden risk", "Volatility, beta, Sharpe and drawdown four ways.", sm.risk, 6),
+        Item("sm-unsmoothed.png", "Unsmoothed paths", "Geltner and GLM unsmoothed index against the true one.", sm.unsmoothed, 6),
+        Item(
+            "sm-glm-weights.png", "GLM weights", "Estimated GLM smoothing weights against the appraisal rule.", sm.glm_weights, 6
+        ),
+        Item("sm-speed.png", "Appraisal speed", "Measured volatility by appraisal speed.", sm.speed, 6),
+        Item("sm-noise.png", "Appraisal noise", "Geltner volatility by appraisal noise.", sm.noise, 6),
+        Item("sm-horizons.png", "Correlation by horizon", "Correlation with the market over longer horizons.", sm.horizons, 6),
+        Item("sm-allocation.png", "Allocation", "Maximum-Sharpe weight in private equity four ways.", sm.allocation, 6),
+        Item("sm-robustness.png", "Robustness", "Results across many index histories.", sm.robustness, 6),
     )
 
 

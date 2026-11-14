@@ -18,3 +18,4 @@
 | [0014](0014-fair-value-is-backsolved-from-the-latest-round.md) | Fair value is backsolved from the latest round; overstatement is post-money over fair value | Accepted |
 | [0015](0015-nav-nowcasting-is-a-state-space-model-with-noisy-appraisals.md) | NAV nowcasting is a state-space model with noisy, partial-adjustment appraisals | Accepted |
 | [0016](0016-parameters-are-estimated-on-panels-and-errors-scored-above-a-floor.md) | Parameters are estimated on panels of funds, and errors are scored above a size floor | Accepted |
+| [0017](0017-a-model-index-with-a-private-factor-tests-the-unsmoothing-methods.md) | A model index with a private factor tests the unsmoothing methods | Accepted |
