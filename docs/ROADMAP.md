@@ -12,8 +12,8 @@ examples, independent methods, identities that must hold, and funds whose truth 
 | 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | #3 | v0.3.0 | ✅ Done |
 | 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | #4 | v0.4.0 | ✅ Done |
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | #5 | v0.5.0 | ✅ Done |
-| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 | Next |
-| 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 |  |
+| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 | ✅ Done |
+| 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 | Next |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | #8 | v0.8.0 |  |
 | 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk | #9 | v0.9.0 |  |
 | 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports | #10 | v1.0.0 |  |
@@ -97,3 +97,14 @@ is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov
   intervals; parameters recovered from panels, not from single funds; reported-NAV betas biased
   to about a x beta.
 - **Ten charts, four validation checks, ADRs 0015-0016.**
+
+## Day 6 - smoothed returns and hidden risk ✅
+
+**Issue #6, release v0.6.0.**
+
+- **`pmlab.smoothing`.** A model index of funds across vintages with a public and a private factor;
+  Geltner and GLM unsmoothing; risk tables, horizon correlations and maximum-Sharpe weights.
+- **Findings.** Reported volatility half the truth, beta 0.41 against 0.90, Sharpe 1.12 against
+  0.66; Geltner restores the risk; GLM(2) finds the weights but understates volatility; GLM(4) is
+  not identified on 25 years.
+- **Ten charts, four validation checks, ADR 0017.**

@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.5.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.6.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -28,7 +28,7 @@ the financial engineering of the asset class over ten days, one part a day.
 | 3 | Stochastic fund cash-flow models and secondary pricing: Takahashi-Alexander, calibration, discounts to NAV | ✅ v0.3.0 |
 | 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | ✅ v0.4.0 |
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | ✅ v0.5.0 |
-| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies |  |
+| 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | ✅ v0.6.0 |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas |  |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming |  |
 | 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk |  |
@@ -139,6 +139,22 @@ The full account is in [venture capital as options](docs/notes/venture-capital-o
 ![After a crash, reported NAVs overstate; the filter does not](docs/images/nc-crash.png)
 
 The full account is in [nowcasting fund values](docs/notes/nowcasting-fund-values.md).
+
+**Day 6: smoothed returns and hidden risk.**
+
+- **A model private equity index** of 1,200 funds across 30 vintages, sharing the public market and
+  a private factor, valued at true value and at reported NAV.
+- **Reported NAVs show half the risk for the same return:** volatility 10.7% against 19.8%, beta
+  0.41 against 0.90, Sharpe 1.12 against 0.66; lag-1 autocorrelation 0.63.
+- **Geltner unsmoothing restores it** (median 97% of true volatility over 60 histories); GLM with two
+  lags finds the smoothing weights (0.51, 0.33, 0.16 against 0.51, 0.31, 0.18) but understates
+  volatility (77%); with four lags it breaks down.
+- **Allocation:** on reported numbers the maximum-Sharpe mix holds 104% private equity; on true
+  numbers 46%.
+
+![Reported NAVs earn the same return with half the risk](docs/images/sm-paths.png)
+
+The full account is in [smoothed returns and hidden risk](docs/notes/smoothed-returns-and-hidden-risk.md).
 
 ## Validation
 
