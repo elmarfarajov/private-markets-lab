@@ -268,3 +268,45 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![Weight on each report](images/nc-gain.png)
 
+## Day 6: Smoothed returns and hidden risk
+
+**True and reported index** - Growth of the index at true value and reported NAV.
+
+![True and reported index](images/sm-paths.png)
+
+**Autocorrelation** - Autocorrelation of true and reported index returns.
+
+![Autocorrelation](images/sm-autocorrelation.png)
+
+**Hidden risk** - Volatility, beta, Sharpe and drawdown four ways.
+
+![Hidden risk](images/sm-risk.png)
+
+**Unsmoothed paths** - Geltner and GLM unsmoothed index against the true one.
+
+![Unsmoothed paths](images/sm-unsmoothed.png)
+
+**GLM weights** - Estimated GLM smoothing weights against the appraisal rule.
+
+![GLM weights](images/sm-glm-weights.png)
+
+**Appraisal speed** - Measured volatility by appraisal speed.
+
+![Appraisal speed](images/sm-speed.png)
+
+**Appraisal noise** - Geltner volatility by appraisal noise.
+
+![Appraisal noise](images/sm-noise.png)
+
+**Correlation by horizon** - Correlation with the market over longer horizons.
+
+![Correlation by horizon](images/sm-horizons.png)
+
+**Allocation** - Maximum-Sharpe weight in private equity four ways.
+
+![Allocation](images/sm-allocation.png)
+
+**Robustness** - Results across many index histories.
+
+![Robustness](images/sm-robustness.png)
+
