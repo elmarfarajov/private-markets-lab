@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-25
+
+Day 7: risk-adjusted performance with a stochastic discount factor.
+
+### Added
+
+- **`pmlab.gpme`**: `SDF` (Kaplan-Schoar, log-normal closed form, sample-moment fit),
+  `fair_alpha`, `npv`, `gpme` (NPV per unit called), `pme_ratio`, and `cashflow_beta`
+  (Driessen-Lin-Phalippou).
+- Ten charts, the Day 7 note, ADR 0018.
+- Four validation checks (43 in all) and 8 tests.
+
+### Fixed
+
+- `cashflows.irr_roots` reported spurious touching roots where the NPV is merely discounted
+  towards zero at high rates. It now requires a local minimum with no sign change beside it.
+- Property tests no longer generate denormal amounts.
+
 ## [0.6.0] - 2026-11-14
 
 Day 6: smoothed returns and the risk they hide.

@@ -7,7 +7,7 @@ from datetime import date
 import numpy as np
 import numpy_financial as npf
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from pmlab.cashflows import (
@@ -70,7 +70,7 @@ def test_norstrom_guarantees_one_positive_root_but_not_uniqueness():
 
 @settings(max_examples=150, deadline=None)
 @given(
-    st.lists(st.floats(0.0, 80.0), min_size=2, max_size=12),
+    st.lists(st.one_of(st.just(0.0), st.floats(1e-6, 80.0)), min_size=2, max_size=12),  # amounts in pounds, not denormals
     st.floats(30.0, 200.0),
     st.floats(0.1, 2.0),
 )
@@ -87,7 +87,10 @@ def test_conventional_streams_one_root_matching_numpy_financial(inflows, outlay,
 
 
 @settings(max_examples=100, deadline=None)
-@given(st.lists(st.floats(-100.0, 100.0), min_size=3, max_size=8), st.floats(0.5, 20.0), st.floats(0.0, 5.0))
+@given(
+    st.lists(st.floats(-100.0, 100.0, allow_subnormal=False), min_size=3, max_size=8), st.floats(0.5, 20.0), st.floats(0.0, 5.0)
+)
+@example([0.0, 0.0, 0.0, 0.0, 2.0, -28.0, 24.0], 1.0, 1.0)  # once gave a spurious touching root near 1,208%
 def test_roots_are_invariant_to_scale_and_to_a_time_shift_and_bounded_by_descartes(flows, scale, shift):
     a = np.array(flows)
     if not np.any(a):

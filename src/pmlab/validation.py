@@ -15,6 +15,7 @@ import pandas as pd
 from scipy.stats import norm
 
 from . import fundmodel as fm
+from . import gpme as gp
 from . import nowcast as nc
 from . import secondary as sec
 from . import smoothing as sm
@@ -480,6 +481,49 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
             bool(end < 1e-12 and es < ef),
         )
 
+    def gp_ks_special_case() -> tuple[str, str, str, bool]:
+        worst = 0.0
+        for seed in range(5):
+            f = simulate_fund(gbm_market(13, seed=80 + seed), FundSpec(beta=1.0 + 0.3 * seed, idio=0.25, seed=seed))
+            worst = max(
+                worst, abs(gp.pme_ratio(f.times, f.amounts, f.index, gp.SDF.kaplan_schoar()) - ks_pme(f.amounts, f.index))
+            )
+        return "SDF a = 0, b = 1 gives pme.ks_pme", "5 funds", f"{worst:.1e}", worst < 1e-12
+
+    def gp_sdf_prices_market_and_bond() -> tuple[str, str, str, bool]:
+        mu, sig, r = 0.08, 0.16, 0.02
+        sd = gp.SDF.lognormal(mu, sig, r)
+        z, w = np.polynomial.hermite_e.hermegauss(80)
+        w = w / w.sum()
+        x = (mu - 0.5 * sig**2) + sig * z  # one year of log returns
+        m = np.exp(-sd.a - sd.b * x)
+        gap = max(abs(float(w @ (m * np.exp(x))) - 1.0), abs(float(w @ m) - np.exp(-r)))
+        rng = np.random.default_rng(81)
+        lv = 100 * np.exp(np.cumsum((mu - 0.5 * sig**2) / 12 + sig / np.sqrt(12) * rng.standard_normal(20_000)))
+        fit = gp.SDF.fit(np.r_[100.0, lv], 1 / 12, r)
+        ok = gap < 1e-12 and abs(fit.b - sd.b) < 0.5  # standard error of b about 0.15 in 1,667 years
+        return f"E[MR] = 1, E[M] = exp(-r); b = {sd.b:.3f}", f"fitted b {fit.b:.3f} (20,000 months)", f"{gap:.1e}", ok
+
+    def gp_fair_alpha_monte_carlo() -> tuple[str, str, str, bool]:
+        mu, sig, r = 0.08, 0.16, 0.02
+        sd = gp.SDF.lognormal(mu, sig, r)
+        rng = np.random.default_rng(82)
+        x = (mu - 0.5 * sig**2) * 5 + sig * np.sqrt(5) * rng.standard_normal(2_000_000)
+        worst = 0.0
+        for beta in (0.5, 2.0):
+            a = gp.fair_alpha(beta, sd, mu, sig)
+            price = float(np.mean(np.exp(-5 * sd.a - sd.b * x + beta * x + 5 * a)))
+            worst = max(worst, abs(price - 1.0))
+        return "a fairly priced power payoff costs one", "beta 0.5 and 2, 2m draws", f"{worst:.4f}", worst < 0.01
+
+    def gp_cashflow_beta_recovery() -> tuple[str, str, str, bool]:
+        funds = []
+        for s in range(40):
+            f = simulate_fund(gbm_market(13, seed=900 + s), FundSpec(beta=1.5, alpha=0.0, idio=0.0, seed=s))
+            funds.append((f.times, f.amounts, f.index))
+        est = gp.cashflow_beta(funds, 0.02)
+        return "planted beta 1.5, no own risk", "40 funds", f"{est.beta:.3f}", abs(est.beta - 1.5) < 0.05
+
     def sm_geltner_exact() -> tuple[str, str, str, bool]:
         rng = np.random.default_rng(71)
         true = pd.Series(rng.normal(0.02, 0.1, 400))
@@ -558,6 +602,10 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("Smoothing", "GLM recovers planted weights", sm_glm_recovery)
     add("Smoothing", "Index identity without smoothing", sm_index_identity)
     add("Smoothing", "GLM re-smooths to the data", sm_glm_identity)
+    add("SDF", "Kaplan-Schoar is the SDF with b = 1", gp_ks_special_case)
+    add("SDF", "Log-normal SDF prices market and bond", gp_sdf_prices_market_and_bond)
+    add("SDF", "Fair alpha against Monte Carlo", gp_fair_alpha_monte_carlo)
+    add("SDF", "Cash-flow beta recovers a planted beta", gp_cashflow_beta_recovery)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 

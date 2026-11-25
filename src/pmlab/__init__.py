@@ -1,3 +1,3 @@
 """Private markets and alternative investments: cash flows, fees, fund models, risk and allocation, measured."""
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
