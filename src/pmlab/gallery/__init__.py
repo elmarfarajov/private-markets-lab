@@ -23,6 +23,7 @@ DAYS: dict[int, str] = {
     4: "Venture capital: preferred stock as options",
     5: "Nowcasting fund values: the Kalman filter",
     6: "Smoothed returns and hidden risk",
+    7: "Risk-adjusted performance with a stochastic discount factor",
 }
 
 
@@ -44,6 +45,7 @@ def items() -> tuple[Item, ...]:
     from . import cashflows, fees
     from . import fundmodels as fm
     from . import nowcast as nc
+    from . import sdfpme as gp
     from . import smoothed as sm
     from . import venture as vc
 
@@ -370,6 +372,44 @@ def items() -> tuple[Item, ...]:
         Item("sm-horizons.png", "Correlation by horizon", "Correlation with the market over longer horizons.", sm.horizons, 6),
         Item("sm-allocation.png", "Allocation", "Maximum-Sharpe weight in private equity four ways.", sm.allocation, 6),
         Item("sm-robustness.png", "Robustness", "Results across many index histories.", sm.robustness, 6),
+        Item(
+            "gp-sdf.png",
+            "The SDF",
+            "The discount factor implied by the S&P 500 against Kaplan-Schoar's 1/R.",
+            gp.sdf,
+            7,
+            "market",
+        ),
+        Item(
+            "gp-fair-alpha.png",
+            "Break-even drift",
+            "The drift a deal needs by market exposure, under GPME and KS-PME.",
+            gp.fair_alpha,
+            7,
+            "market",
+        ),
+        Item("gp-bias.png", "Bias by beta", "Mean GPME and KS-PME of fairly priced funds by beta.", gp.bias, 7, None),
+        Item("gp-dispersion.png", "Dispersion", "How noisy one fund's GPME and KS-PME are.", gp.dispersion, 7, None),
+        Item(
+            "gp-sensitivity.png",
+            "Assumed risk aversion",
+            "Apparent NPV of a fair deal by the SDF's risk aversion.",
+            gp.sensitivity,
+            7,
+            None,
+        ),
+        Item(
+            "gp-vintages.png",
+            "Vintages on the S&P 500",
+            "GPME and KS-PME by vintage on the actual index path.",
+            gp.vintages,
+            7,
+            "market",
+        ),
+        Item("gp-cf-beta.png", "Cash-flow betas", "Driessen-Lin-Phalippou estimates against planted betas.", gp.cf_beta, 7, None),
+        Item("gp-cf-noise.png", "Cash-flow beta noise", "Spread of the beta estimate by number of funds.", gp.cf_noise, 7, None),
+        Item("gp-power.png", "Testing for skill", "Rejection rates of no skill, GPME against KS-PME.", gp.power, 7, None),
+        Item("gp-fees.png", "Fees", "Mean GPME and KS-PME by management fee.", gp.fees, 7, None),
     )
 
 

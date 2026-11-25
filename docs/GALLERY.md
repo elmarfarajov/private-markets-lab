@@ -310,3 +310,45 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![Robustness](images/sm-robustness.png)
 
+## Day 7: Risk-adjusted performance with a stochastic discount factor
+
+**The SDF** - The discount factor implied by the S&P 500 against Kaplan-Schoar's 1/R.
+
+![The SDF](images/gp-sdf.png)
+
+**Break-even drift** - The drift a deal needs by market exposure, under GPME and KS-PME.
+
+![Break-even drift](images/gp-fair-alpha.png)
+
+**Bias by beta** - Mean GPME and KS-PME of fairly priced funds by beta.
+
+![Bias by beta](images/gp-bias.png)
+
+**Dispersion** - How noisy one fund's GPME and KS-PME are.
+
+![Dispersion](images/gp-dispersion.png)
+
+**Assumed risk aversion** - Apparent NPV of a fair deal by the SDF's risk aversion.
+
+![Assumed risk aversion](images/gp-sensitivity.png)
+
+**Vintages on the S&P 500** - GPME and KS-PME by vintage on the actual index path.
+
+![Vintages on the S&P 500](images/gp-vintages.png)
+
+**Cash-flow betas** - Driessen-Lin-Phalippou estimates against planted betas.
+
+![Cash-flow betas](images/gp-cf-beta.png)
+
+**Cash-flow beta noise** - Spread of the beta estimate by number of funds.
+
+![Cash-flow beta noise](images/gp-cf-noise.png)
+
+**Testing for skill** - Rejection rates of no skill, GPME against KS-PME.
+
+![Testing for skill](images/gp-power.png)
+
+**Fees** - Mean GPME and KS-PME by management fee.
+
+![Fees](images/gp-fees.png)
+

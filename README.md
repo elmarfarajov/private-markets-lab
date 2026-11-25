@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.6.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.7.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -29,7 +29,7 @@ the financial engineering of the asset class over ten days, one part a day.
 | 4 | Venture capital: preferred stock as a portfolio of options (OPM, Gornall-Strebulaev), post-money valuations | ✅ v0.4.0 |
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | ✅ v0.5.0 |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | ✅ v0.6.0 |
-| 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas |  |
+| 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | ✅ v0.7.0 |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming |  |
 | 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk |  |
 | 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports |  |
@@ -155,6 +155,23 @@ The full account is in [nowcasting fund values](docs/notes/nowcasting-fund-value
 ![Reported NAVs earn the same return with half the risk](docs/images/sm-paths.png)
 
 The full account is in [smoothed returns and hidden risk](docs/notes/smoothed-returns-and-hidden-risk.md).
+
+**Day 7: risk-adjusted performance with a stochastic discount factor.**
+
+- **Kaplan-Schoar's PME is an SDF with risk aversion one.** The SDF that prices the S&P 500 and a
+  2% bond over 1988-2026 has b = 4.39.
+- **KS-PME rewards leverage:** on fairly priced model funds, the mean KS-PME per pound called is
+  +17.5% at beta 2 and −6.5% at beta 0.5. Korteweg-Nagel's GPME is within its interval of zero at
+  every beta.
+- **Testing for skill:** in samples of 100 beta-2 funds with no skill, KS-PME rejects in 100% of
+  samples and GPME in 5%.
+- **Cash-flow betas** (Driessen-Lin-Phalippou) recover the planted beta from 200 funds; the alpha
+  comes out about 1.5 points too high.
+- **Bug fixed:** Day 1's IRR root scan reported spurious "touching" roots at high rates.
+
+![KS-PME rewards leverage](docs/images/gp-bias.png)
+
+The full account is in [risk-adjusted performance with a stochastic discount factor](docs/notes/sdf-performance.md).
 
 ## Validation
 

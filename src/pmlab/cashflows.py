@@ -118,9 +118,12 @@ def irr_roots(times: ArrayLike, amounts: ArrayLike, lo: float = -0.99, hi: float
             roots.append(float(r[i]))
         elif np.sign(f[i]) != np.sign(f[i + 1]) and f[i + 1] != 0.0:
             roots.append(float(brentq(lambda q: float(npv(q, t, a)[0]), r[i], r[i + 1], xtol=1e-15, rtol=1e-15, maxiter=200)))
-    # touching roots: a local minimum of |f| that is numerically zero and not already found
-    small = np.abs(f) <= 1e-12 * scale
-    for j in np.flatnonzero(small):
+    # touching roots: a local minimum of |f| that is numerically zero, with no crossing beside it, and not already found
+    g = np.abs(f)
+    small = g <= 1e-12 * scale
+    for j in np.flatnonzero(small[1:-1]) + 1:
+        if g[j] > g[j - 1] or g[j] > g[j + 1] or np.sign(f[j - 1]) != np.sign(f[j + 1]):
+            continue  # not a touching minimum: a crossing (found above) or the NPV merely discounted towards zero
         if all(abs(r[j] - q) > 1e-6 * (1 + abs(q)) for q in roots):
             roots.append(float(r[j]))
     return sorted(roots)
