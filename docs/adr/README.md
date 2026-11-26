@@ -20,3 +20,4 @@
 | [0016](0016-parameters-are-estimated-on-panels-and-errors-scored-above-a-floor.md) | Parameters are estimated on panels of funds, and errors are scored above a size floor | Accepted |
 | [0017](0017-a-model-index-with-a-private-factor-tests-the-unsmoothing-methods.md) | A model index with a private factor tests the unsmoothing methods | Accepted |
 | [0018](0018-a-fixed-sdf-and-a-constant-bond-rate.md) | A fixed SDF and a constant bond rate for GPME | Accepted |
+| [0019](0019-a-programme-simulation-and-a-separate-dp.md) | A programme simulation for liquidity and a separate DP for the allocation | Accepted |

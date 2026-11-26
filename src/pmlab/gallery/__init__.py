@@ -24,6 +24,7 @@ DAYS: dict[int, str] = {
     5: "Nowcasting fund values: the Kalman filter",
     6: "Smoothed returns and hidden risk",
     7: "Risk-adjusted performance with a stochastic discount factor",
+    8: "Allocating to illiquid assets",
 }
 
 
@@ -42,6 +43,7 @@ class Item:
 
 def items() -> tuple[Item, ...]:
     # imported here so that the package imports without the charts' own dependencies being loaded
+    from . import allocation as al
     from . import cashflows, fees
     from . import fundmodels as fm
     from . import nowcast as nc
@@ -410,6 +412,58 @@ def items() -> tuple[Item, ...]:
         Item("gp-cf-noise.png", "Cash-flow beta noise", "Spread of the beta estimate by number of funds.", gp.cf_noise, 7, None),
         Item("gp-power.png", "Testing for skill", "Rejection rates of no skill, GPME against KS-PME.", gp.power, 7, None),
         Item("gp-fees.png", "Fees", "Mean GPME and KS-PME by management fee.", gp.fees, 7, None),
+        Item("al-pacing.png", "Commitment pacing", "Private equity share of wealth under two pacing rules.", al.pacing, 8, None),
+        Item(
+            "al-commitments.png",
+            "Commitments and overcommitment",
+            "Annual commitments and the overcommitment ratio.",
+            al.commitments,
+            8,
+            None,
+        ),
+        Item("al-cashflows.png", "Programme cash flows", "Net cash flow of the programme by year.", al.cashflows, 8, None),
+        Item(
+            "al-denominator.png",
+            "The denominator effect",
+            "Reported and true allocation around a crash.",
+            al.denominator,
+            8,
+            None,
+        ),
+        Item(
+            "al-crisis-flows.png",
+            "Calls and distributions in a crash",
+            "Quarterly calls and distributions with and without a crash.",
+            al.crisis_flows,
+            8,
+            None,
+        ),
+        Item(
+            "al-liquidity.png",
+            "Forced sales",
+            "Probability of a forced secondary sale by allocation and liquidity floor.",
+            al.liquidity,
+            8,
+            None,
+        ),
+        Item("al-sale-cost.png", "Cost of forced sales", "Discount paid on forced sales by allocation.", al.sale_cost, 8, None),
+        Item(
+            "al-mean-variance.png",
+            "Mean-variance weights",
+            "Optimal weights on reported and true moments.",
+            al.mean_variance,
+            8,
+            None,
+        ),
+        Item("al-dp-target.png", "Optimal illiquid share", "DP allocation by rebalancing frequency.", al.dp_target, 8, None),
+        Item(
+            "al-dp-policy.png",
+            "Cost of illiquidity and liquid policy",
+            "Certainty-equivalent cost and the liquid equity share.",
+            al.dp_policy,
+            8,
+            None,
+        ),
     )
 
 

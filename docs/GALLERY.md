@@ -352,3 +352,45 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![Fees](images/gp-fees.png)
 
+## Day 8: Allocating to illiquid assets
+
+**Commitment pacing** - Private equity share of wealth under two pacing rules.
+
+![Commitment pacing](images/al-pacing.png)
+
+**Commitments and overcommitment** - Annual commitments and the overcommitment ratio.
+
+![Commitments and overcommitment](images/al-commitments.png)
+
+**Programme cash flows** - Net cash flow of the programme by year.
+
+![Programme cash flows](images/al-cashflows.png)
+
+**The denominator effect** - Reported and true allocation around a crash.
+
+![The denominator effect](images/al-denominator.png)
+
+**Calls and distributions in a crash** - Quarterly calls and distributions with and without a crash.
+
+![Calls and distributions in a crash](images/al-crisis-flows.png)
+
+**Forced sales** - Probability of a forced secondary sale by allocation and liquidity floor.
+
+![Forced sales](images/al-liquidity.png)
+
+**Cost of forced sales** - Discount paid on forced sales by allocation.
+
+![Cost of forced sales](images/al-sale-cost.png)
+
+**Mean-variance weights** - Optimal weights on reported and true moments.
+
+![Mean-variance weights](images/al-mean-variance.png)
+
+**Optimal illiquid share** - DP allocation by rebalancing frequency.
+
+![Optimal illiquid share](images/al-dp-target.png)
+
+**Cost of illiquidity and liquid policy** - Certainty-equivalent cost and the liquid equity share.
+
+![Cost of illiquidity and liquid policy](images/al-dp-policy.png)
+
