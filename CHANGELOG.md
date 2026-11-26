@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-26
+
+Day 8: allocating to illiquid assets.
+
+### Added
+
+- **`pmlab.allocation`**: `simulate_programme` (vintage-by-vintage programme with pacing rules,
+  spending, a liquidity floor, crash scenarios and forced secondary sales at a market-dependent
+  discount), `programme_moments`, `mean_variance`, and `solve_dp` / `illiquidity_cost` (CRRA
+  investor with an illiquid asset rebalanced at random times).
+- Ten charts, the Day 8 note, ADR 0019.
+- Four validation checks (47 in all) and 9 tests.
+
 ## [0.7.0] - 2026-11-25
 
 Day 7: risk-adjusted performance with a stochastic discount factor.

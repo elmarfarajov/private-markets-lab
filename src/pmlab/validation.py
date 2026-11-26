@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+from . import allocation as al
 from . import fundmodel as fm
 from . import gpme as gp
 from . import nowcast as nc
@@ -524,6 +525,49 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
         est = gp.cashflow_beta(funds, 0.02)
         return "planted beta 1.5, no own risk", "40 funds", f"{est.beta:.3f}", abs(est.beta - 1.5) < 0.05
 
+    def al_liquid_only_closed_form() -> tuple[str, str, str, bool]:
+        p = al.simulate_programme(al.Pacing(rate=0.0), years=5, scenarios=50, seed=90, spending=0.0)
+        mk = al.Market()
+        rng = np.random.default_rng(90)
+        z = rng.standard_normal((50, 20 + 48))[:, :20]
+        eq = np.exp((mk.mu - 0.5 * mk.vol**2) / 4 + mk.vol * 0.5 * z)
+        g = np.cumprod(mk.equity_share * eq + (1 - mk.equity_share) * np.exp(mk.r / 4), axis=1)
+        gap = float(np.max(np.abs(p.liquid - g)))
+        return "no commitments, no spending: liquid = compounded 70/30 return", "50 histories, 5 years", f"{gap:.1e}", gap < 1e-12
+
+    def al_floor_restored() -> tuple[str, str, str, bool]:
+        p = al.simulate_programme(al.Pacing(rate=0.14), years=20, scenarios=300, seed=91, floor=0.2)
+        hit = p.sold > 0
+        ratio = (p.liquid / p.wealth_reported)[hit]
+        gap = float(np.max(np.abs(ratio - 0.2))) if ratio.size else float("nan")
+        return (
+            "after a forced sale liquid assets = 20% of reported wealth",
+            f"{int(hit.sum())} sales",
+            f"{gap:.1e}",
+            bool(ratio.size) and gap < 1e-12,
+        )
+
+    def al_merton_share() -> tuple[str, str, str, bool]:
+        d = al.DPSpec(alphas=101, nodes=(15, 5))
+        s = al.solve_dp(d, 1.0)
+        merton = (d.mu_m - d.r) / (d.gamma * d.vol_m**2)
+        return (
+            f"Merton share (mu - r) / (gamma sigma^2) = {merton:.3f}",
+            "no illiquid asset, 1% grid",
+            f"{s.alpha[0]:.2f}",
+            abs(s.alpha[0] - merton) < 0.03,
+        )
+
+    def al_mean_variance_brute_force() -> tuple[str, str, str, bool]:
+        mu, cov = np.array([0.07, 0.10]), np.array([[0.0256, 0.03], [0.03, 0.047]])
+        w = al.mean_variance(mu, cov, 0.02, 5.0)
+        g = np.linspace(-2, 3, 1001)
+        a, b = np.meshgrid(g, g, indexing="ij")
+        obj = a * 0.05 + b * 0.08 - 2.5 * (a * a * cov[0, 0] + 2 * a * b * cov[0, 1] + b * b * cov[1, 1])
+        i, j = np.unravel_index(np.argmax(obj), obj.shape)
+        gap = max(abs(g[i] - w[0]), abs(g[j] - w[1]))
+        return "maximum of mean - gamma/2 variance on a 0.005 grid", "two assets", f"{gap:.4f}", gap <= 0.005
+
     def sm_geltner_exact() -> tuple[str, str, str, bool]:
         rng = np.random.default_rng(71)
         true = pd.Series(rng.normal(0.02, 0.1, 400))
@@ -606,6 +650,10 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("SDF", "Log-normal SDF prices market and bond", gp_sdf_prices_market_and_bond)
     add("SDF", "Fair alpha against Monte Carlo", gp_fair_alpha_monte_carlo)
     add("SDF", "Cash-flow beta recovers a planted beta", gp_cashflow_beta_recovery)
+    add("Allocation", "Liquid assets compound exactly without a programme", al_liquid_only_closed_form)
+    add("Allocation", "Forced sales restore the liquidity floor", al_floor_restored)
+    add("Allocation", "DP recovers Merton's share", al_merton_share)
+    add("Allocation", "Mean-variance weights against brute force", al_mean_variance_brute_force)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 

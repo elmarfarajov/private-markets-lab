@@ -3,7 +3,7 @@
 [![CI](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/elmarfarajov/private-markets-lab/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-[![Release](https://img.shields.io/badge/release-v0.7.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
+[![Release](https://img.shields.io/badge/release-v0.8.0-e0632b)](https://github.com/elmarfarajov/private-markets-lab/releases)
 ![mypy](https://img.shields.io/badge/mypy-strict-1b9e77)
 
 **Private equity, private credit, real assets and hedge funds, measured: the cash-flow mathematics,
@@ -30,7 +30,7 @@ the financial engineering of the asset class over ten days, one part a day.
 | 5 | Nowcasting private equity NAVs: state-space models and the Kalman filter on reported values | ✅ v0.5.0 |
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | ✅ v0.6.0 |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | ✅ v0.7.0 |
-| 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming |  |
+| 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | ✅ v0.8.0 |
 | 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk |  |
 | 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports |  |
 
@@ -172,6 +172,22 @@ The full account is in [smoothed returns and hidden risk](docs/notes/smoothed-re
 ![KS-PME rewards leverage](docs/images/gp-bias.png)
 
 The full account is in [risk-adjusted performance with a stochastic discount factor](docs/notes/sdf-performance.md).
+
+**Day 8: allocating to illiquid assets.**
+
+- **Pacing:** committing a constant 3.5% of wealth a year builds a 20% private equity allocation in
+  about ten years and holds it; steering on the gap to target overshoots, because reported NAV lags.
+- **The denominator effect is a measurement artefact:** in a 33% market fall the reported
+  allocation jumps from 34% to 37% while the true allocation falls to 31%.
+- **In a crash distributions fall 37% but calls only 4%.** Forced secondary sales are nevertheless
+  rare below a 50% allocation, and common above 60%.
+- **True risk matters more than illiquidity:** mean-variance on reported NAVs puts 4.4 times too
+  much in private equity, while rebalancing only once a decade lowers the optimal share from 26% to
+  23% and costs 0.05% a year.
+
+![The denominator effect](docs/images/al-denominator.png)
+
+The full account is in [allocating to illiquid assets](docs/notes/illiquid-allocation.md).
 
 ## Validation
 
