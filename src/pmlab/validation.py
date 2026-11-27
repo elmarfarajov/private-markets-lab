@@ -17,6 +17,7 @@ from scipy.stats import norm
 from . import allocation as al
 from . import fundmodel as fm
 from . import gpme as gp
+from . import hedgefunds as hf
 from . import nowcast as nc
 from . import secondary as sec
 from . import smoothing as sm
@@ -607,6 +608,41 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
         ok = gap < 1e-12 and abs(fit.theta.sum() - 1.0) < 1e-12
         return "GLM weights sum to one and re-smooth to the reported series", "model index", f"{gap:.1e}", ok
 
+    def hf_lookback_hull() -> tuple[str, str, str, bool]:
+        c = float(hf.lookback_call(50, 50, 0.25, 0.10, 0.40))
+        p = float(hf.lookback_put(50, 50, 0.25, 0.10, 0.40))
+        ok = round(c, 2) == 8.04 and round(p, 2) == 7.79
+        ref = "8.04 and 7.79 (Hull, floating lookback call and put, S = 50, sigma 40%, r 10%, 3 months)"
+        return ref, f"{c:.4f} and {p:.4f}", "to the printed digit", ok
+
+    def hf_lookback_mc() -> tuple[str, str, str, bool]:
+        cf = float(hf.lookback_straddle(0.25, 0.03, 0.2))
+        mc, se = hf.lookback_mc(0.25, 0.03, 0.2, steps=250, paths=40_000 if fast else 200_000, seed=7)
+        disc = float(hf.lookback_straddle(1 / 12, 0.03, 0.2, dt=1 / 252))
+        dm, _ = hf.lookback_mc(1 / 12, 0.03, 0.2, steps=21, paths=40_000 if fast else 200_000, seed=8, shift=False)
+        z = (mc - cf) / se
+        ok = abs(z) < 4 and abs(disc / dm - 1) < 0.01
+        ref = "continuous: shifted Monte Carlo; daily: unshifted Monte Carlo within 1%"
+        return ref, f"z = {z:.2f}; daily {disc:.4f} vs {dm:.4f}", f"{disc / dm - 1:.2%}", ok
+
+    def hf_fee_closed_form() -> tuple[str, str, str, bool]:
+        g = (1.12) ** (1 / 12) - 1
+        f = hf.two_and_twenty(np.full((1, 36), g))
+        year = ((1 + g) * (1 - 0.02 / 12)) ** 12
+        want = 1 + 0.8 * (year - 1)
+        got = np.prod(1 + f.net[0].reshape(3, 12), axis=1)
+        gap = float(np.max(np.abs(got - want)))
+        return "constant 12% gross: each year 1 + 0.8 ((1+g)(1-m/12))^12 - 0.8", "3 years", f"{gap:.1e}", gap < 1e-12
+
+    def hf_clone_recovery() -> tuple[str, str, str, bool]:
+        rng = np.random.default_rng(95)
+        idx = pd.date_range("2000-01-31", periods=240, freq="ME")
+        x = pd.DataFrame(rng.normal(0.004, 0.04, (240, 4)), idx, list("abcd"))
+        w = np.array([0.5, -0.3, 0.2, 0.0])
+        c = hf.linear_clone(x @ w, x, renormalise=False)
+        gap = float(np.max(np.abs(c.weights.to_numpy() - w)))
+        return "a target that is a fixed mix of the factors", "240 months, no noise", f"{gap:.1e}", gap < 1e-10
+
     add("IRR", "XIRR, published example", xirr_microsoft)
     add("IRR", "MIRR, published examples", mirr_microsoft)
     add("IRR", "Two IRRs: the pump problem", lorie_savage)
@@ -654,6 +690,10 @@ def run_validation(fast: bool = False) -> pd.DataFrame:
     add("Allocation", "Forced sales restore the liquidity floor", al_floor_restored)
     add("Allocation", "DP recovers Merton's share", al_merton_share)
     add("Allocation", "Mean-variance weights against brute force", al_mean_variance_brute_force)
+    add("Hedge funds", "Lookback closed form, published example", hf_lookback_hull)
+    add("Hedge funds", "Lookback straddle against Monte Carlo", hf_lookback_mc)
+    add("Hedge funds", "2 and 20 with a high-water mark, closed form", hf_fee_closed_form)
+    add("Hedge funds", "Clone recovers fixed weights", hf_clone_recovery)
     return pd.DataFrame([c.__dict__ for c in checks])
 
 
