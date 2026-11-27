@@ -31,7 +31,7 @@ the financial engineering of the asset class over ten days, one part a day.
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | ✅ v0.6.0 |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | ✅ v0.7.0 |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | ✅ v0.8.0 |
-| 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk |  |
+| 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk | ✅ v0.9.0 |
 | 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports |  |
 
 The plan and each day's results are in the [roadmap](docs/ROADMAP.md), the charts in the
@@ -189,6 +189,23 @@ The full account is in [risk-adjusted performance with a stochastic discount fac
 
 The full account is in [allocating to illiquid assets](docs/notes/illiquid-allocation.md).
 
+**Day 9: hedge funds and liquid alternatives.**
+
+- **Trend following paid when equities did not:** time-series momentum on ten ETFs earned 9.9% a
+  year over T-bills since 2005 (Sharpe 0.53, beta −0.13), and made +31% in 2008 and +37% in 2022.
+- **Linear clones copy linear exposures:** a rolling clone tracks QAI, a hedge-fund index tracker,
+  at 0.89 correlation, but trend following at 0.16.
+- **The put writer's alpha is a written put:** the CBOE PutWrite index has a 1.5% CAPM alpha that
+  falls to zero once an at-the-money put factor is added.
+- **2 and 20 take 55% of the gross return** of a Sharpe-0.5 fund at 10% volatility; the high-water
+  mark saves investors six points.
+- **Pricing note:** a daily-monitored lookback straddle priced with the continuous formula is 17%
+  too dear; the Broadie-Glasserman-Kou shift fixes it to 0.5%.
+
+![The put factor](docs/images/hf-put-factor.png)
+
+The full account is in [hedge funds and liquid alternatives](docs/notes/hedge-funds.md).
+
 ## Validation
 
 `pmlab validate` holds every measure to a published value, an independent method, or an identity
@@ -217,7 +234,7 @@ python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\act
 pip install -e ".[dev]"
 
 pmlab validate                 # every check
-pmlab market fetch             # index histories for the PMEs (stored locally, never committed)
+pmlab market fetch             # index and ETF histories (stored locally, never committed)
 pmlab irr flows.csv --nav 120 --index sp500   # every IRR, the multiples and the PMEs of your own flows
 pmlab gallery                  # every chart
 pytest
@@ -229,7 +246,8 @@ A cash-flow file has two columns, `date` and `amount`, with contributions negati
 
 Fund-level cash flows are licensed (Burgiss, Preqin, Cambridge Associates) and are not used or
 imitated: funds here are stylised and labelled as such, and published academic figures are cited
-as references. Index histories come from Yahoo Finance and stay in the git-ignored `data/`.
+as references. Index and ETF histories come from Yahoo Finance and stay in the git-ignored `data/`;
+hedge-fund databases (HFR, TASS) are licensed, so public trackers (QAI, DBMF) stand in for them.
 
 ## About
 

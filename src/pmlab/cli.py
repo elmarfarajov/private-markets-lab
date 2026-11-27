@@ -52,6 +52,7 @@ def cmd_market(args: argparse.Namespace) -> None:
 
     if args.action == "fetch":
         print(f"stored {market.fetch()}")
+        print(f"stored {market.fetch_alts()}")
         return
     if not market.available():
         print(f"no index history under {market.data_root()}; run `pmlab market fetch`")
@@ -59,6 +60,10 @@ def cmd_market(args: argparse.Namespace) -> None:
     for name in market.TICKERS:
         s = market.load(name)
         print(f"{name:<7} {market.LABELS[name]:<24} {s.index[0]:%Y-%m} to {s.index[-1]:%Y-%m}, {len(s)} months")
+    if market.alts_available():
+        for name, ticker in market.ALTS.items():
+            s = market.load(name, market.alts_root())
+            print(f"{name:<7} {ticker:<24} {s.index[0]:%Y-%m} to {s.index[-1]:%Y-%m}, {len(s)} days")
 
 
 def cmd_validate(args: argparse.Namespace) -> None:

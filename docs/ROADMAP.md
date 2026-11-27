@@ -15,7 +15,7 @@ examples, independent methods, identities that must hold, and funds whose truth 
 | 6 | Smoothed returns and hidden risk: Geltner and GLM unsmoothing, appraisal indices against listed proxies | #6 | v0.6.0 | ✅ Done |
 | 7 | Risk-adjusted performance with stochastic discount factors: Korteweg-Nagel GPME, cash-flow betas | #7 | v0.7.0 | ✅ Done |
 | 8 | Optimal allocation with illiquid assets: commitment pacing, liquidity constraints, dynamic programming | #8 | v0.8.0 | ✅ Done |
-| 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk | #9 | v0.9.0 | Next |
+| 9 | Hedge funds and liquid alternatives: factor replication, trend following, tail risk | #9 | v0.9.0 | ✅ Done |
 | 10 | The endowment digital twin: a 30-year simulator, dashboard and reproducible reports | #10 | v1.0.0 |  |
 
 The plan was revised on Day 2 to make room for option-based valuation (carry, venture preferred stock),
@@ -131,3 +131,18 @@ is not repeated here; it is [lbo-returns-engine](https://github.com/elmarfarajov
   forced sales are rare below a 50% allocation; reported risk misleads mean-variance four-fold;
   illiquidity itself costs about 0.05% a year.
 - **Ten charts, four validation checks, ADR 0019.**
+
+## Day 9 - hedge funds and liquid alternatives ✅
+
+**Issue #9, release v0.9.0.**
+
+- **`pmlab.hedgefunds`.** Time-series momentum; lookback straddles priced in closed form, with the
+  Broadie-Glasserman-Kou shift for daily monitoring, and straddle factors; rolling linear clones;
+  an at-the-money put factor from the VIX; the manipulation-proof performance measure; 2 and 20
+  with a high-water mark.
+- **Data.** Daily closes of ten ETFs, QAI, DBMF, the CBOE PutWrite index, the VIX and the T-bill
+  yield (`pmlab market fetch`, stored locally).
+- **Findings.** Trend following earned equity-like returns with a negative beta; one-month straddle
+  factors explain little of it; clones fail on non-linear strategies; put-writing alpha is an
+  option premium; fees take over half of a Sharpe-0.5 fund's gross return.
+- **Ten charts, four validation checks, ADR 0020.**

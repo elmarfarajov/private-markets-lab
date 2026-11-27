@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pmlab"
-version = "0.8.0"
+version = "0.9.0"
 description = "Private markets and alternative investments: fund cash flows, fees, models, risk and allocation, each measure held to an independent reference."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -62,7 +62,9 @@ ignore = ["E731"]
 "src/pmlab/gallery/smoothed.py" = ["E501"]
 "src/pmlab/gallery/sdfpme.py" = ["E501"]
 "src/pmlab/gallery/allocation.py" = ["E501"]
+"src/pmlab/gallery/hedgefunds.py" = ["E501"]
 "src/pmlab/allocation.py" = ["E501"]
+"src/pmlab/hedgefunds.py" = ["E501"]
 "src/pmlab/smoothing.py" = ["E501"]
 "src/pmlab/nowcast.py" = ["E501"]
 "src/pmlab/venture.py" = ["E501"]
@@ -78,7 +80,7 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 # chart code: matplotlib and numpy stubs are looser than the code
-module = ["pmlab.gallery.venture", "pmlab.gallery.nowcast", "pmlab.gallery.smoothed", "pmlab.gallery.sdfpme", "pmlab.gallery.allocation"]
+module = ["pmlab.gallery.venture", "pmlab.gallery.nowcast", "pmlab.gallery.smoothed", "pmlab.gallery.sdfpme", "pmlab.gallery.allocation", "pmlab.gallery.hedgefunds"]
 disable_error_code = ["call-overload", "arg-type", "assignment", "misc", "operator", "index"]
 
 [tool.coverage.run]

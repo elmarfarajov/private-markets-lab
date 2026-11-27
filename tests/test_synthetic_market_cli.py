@@ -58,7 +58,7 @@ def test_market_files_round_trip(tmp_path):
 
 
 def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatch):
-    from pmlab.gallery import allocation, fees, fundmodels, nowcast, sdfpme, smoothed, venture
+    from pmlab.gallery import allocation, fees, fundmodels, hedgefunds, nowcast, sdfpme, smoothed, venture
 
     monkeypatch.setattr(fees, "SIMS", 600)  # the charts' Monte Carlo, at a size a test can afford
     monkeypatch.setattr(fundmodels, "SIMS", 400)
@@ -68,8 +68,10 @@ def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatc
     monkeypatch.setattr(sdfpme, "SIMS", 40)
     monkeypatch.setattr(sdfpme, "REPS", 2)
     monkeypatch.setattr(allocation, "SCEN", 40)
+    monkeypatch.setattr(hedgefunds, "PATHS", 4000)
+    monkeypatch.setattr(hedgefunds, "FEE_PATHS", 100)
     caches = [fees._value, fees._vega, fees._revenue, fees._alpha_curves]
-    for mod in (fundmodels, venture, nowcast, smoothed, sdfpme, allocation):
+    for mod in (fundmodels, venture, nowcast, smoothed, sdfpme, allocation, hedgefunds):
         caches += [getattr(mod, n) for n in dir(mod) if hasattr(getattr(mod, n), "cache_clear")]
     for cached in caches:
         cached.cache_clear()
@@ -85,7 +87,7 @@ def test_the_gallery_lists_each_chart_once_and_draws_the_offline_ones(monkeypatc
         cached.cache_clear()
 
 
-@pytest.mark.parametrize("item", [i for i in gallery.items() if i.requires == "market"], ids=lambda i: i.filename)
+@pytest.mark.parametrize("item", [i for i in gallery.items() if i.requires in ("market", "alts")], ids=lambda i: i.filename)
 def test_the_market_charts_draw_where_the_history_is_stored(item):
     if not item.available():
         pytest.skip("drawn from the local index history, which this machine does not have")
