@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-11-27
+
+Day 9: hedge funds and liquid alternatives.
+
+### Added
+
+- **`pmlab.hedgefunds`**: `tsmom` (time-series momentum), `lookback_call` / `lookback_put` /
+  `lookback_straddle` (Goldman-Sosin-Gatto, with the Broadie-Glasserman-Kou shift for discrete
+  monitoring) and `lookback_mc`, `straddle_returns` and `class_factors`, `linear_clone` and
+  `clone_quality`, `put_factor`, `mppm`, `summary`, `two_and_twenty` and `fee_share`, `ols` with
+  Newey-West errors.
+- **`pmlab.market`**: daily closes of the liquid-alternative universe (`fetch_alts`, `load_alts`),
+  fetched by `pmlab market fetch`.
+- Ten charts, the Day 9 note, ADR 0020.
+- Four validation checks (51 in all) and 10 tests.
+
 ## [0.8.0] - 2026-11-26
 
 Day 8: allocating to illiquid assets.

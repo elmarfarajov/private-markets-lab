@@ -25,6 +25,7 @@ DAYS: dict[int, str] = {
     6: "Smoothed returns and hidden risk",
     7: "Risk-adjusted performance with a stochastic discount factor",
     8: "Allocating to illiquid assets",
+    9: "Hedge funds and liquid alternatives",
 }
 
 
@@ -35,9 +36,11 @@ class Item:
     description: str
     build: Callable[[], Figure]
     day: int
-    requires: str | None = None  # "market": drawn from the local index history (``pmlab market fetch``)
+    requires: str | None = None  # "market" or "alts": drawn from local histories (``pmlab market fetch``)
 
     def available(self) -> bool:
+        if self.requires == "alts":
+            return market.alts_available()
         return self.requires is None or market.available()
 
 
@@ -46,6 +49,7 @@ def items() -> tuple[Item, ...]:
     from . import allocation as al
     from . import cashflows, fees
     from . import fundmodels as fm
+    from . import hedgefunds as hf
     from . import nowcast as nc
     from . import sdfpme as gp
     from . import smoothed as sm
@@ -464,6 +468,66 @@ def items() -> tuple[Item, ...]:
             8,
             None,
         ),
+        Item(
+            "hf-tsmom.png",
+            "Trend following",
+            "Time-series momentum on ten ETFs against the S&P 500 and DBMF.",
+            hf.tsmom,
+            9,
+            "alts",
+        ),
+        Item(
+            "hf-smile.png",
+            "The trend follower's smile",
+            "Quarterly TSMOM returns against the market, with a quadratic fit.",
+            hf.smile,
+            9,
+            "alts",
+        ),
+        Item(
+            "hf-straddle-price.png",
+            "Pricing the lookback straddle",
+            "Closed forms against Monte Carlo, continuous and daily monitoring.",
+            hf.straddle_price,
+            9,
+        ),
+        Item(
+            "hf-straddle-betas.png",
+            "Trend returns on straddle factors",
+            "R² and loadings by lookback.",
+            hf.straddle_betas,
+            9,
+            "alts",
+        ),
+        Item("hf-clones.png", "Linear clones", "Out-of-sample clones of four targets.", hf.clones, 9, "alts"),
+        Item(
+            "hf-clone-weights.png",
+            "Clone quality and weights",
+            "Tracking error by target and the QAI clone's weights.",
+            hf.clone_weights,
+            9,
+            "alts",
+        ),
+        Item(
+            "hf-putwrite.png",
+            "Writing index puts",
+            "The PutWrite index against the S&P 500, with drawdowns.",
+            hf.putwrite,
+            9,
+            "alts",
+        ),
+        Item(
+            "hf-put-factor.png", "The put factor", "PutWrite alpha with and without an option factor.", hf.put_factor, 9, "alts"
+        ),
+        Item(
+            "hf-measures.png",
+            "Sharpe against MPPM",
+            "Rankings by Sharpe ratio and a manipulation-proof measure.",
+            hf.measures,
+            9,
+            "alts",
+        ),
+        Item("hf-fees.png", "2 and 20", "Share of gross return taken by fees, with and without a high-water mark.", hf.fees, 9),
     )
 
 
@@ -474,7 +538,7 @@ def build(out_dir: str | Path = "docs/images", only: str | None = None) -> list[
         if only and only not in (item.filename, str(item.day)):
             continue
         if not item.available():
-            print(f"skipped {item.filename}: needs the local index history (pmlab market fetch)")
+            print(f"skipped {item.filename}: needs local {item.requires} history (pmlab market fetch)")
             continue
         written.append(save(item.build(), Path(out_dir) / item.filename))
     return written

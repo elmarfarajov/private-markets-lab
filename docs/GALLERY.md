@@ -394,3 +394,45 @@ Every chart is rebuilt from source with `pmlab gallery`.
 
 ![Cost of illiquidity and liquid policy](images/al-dp-policy.png)
 
+## Day 9: Hedge funds and liquid alternatives
+
+**Trend following** - Time-series momentum on ten ETFs against the S&P 500 and DBMF.
+
+![Trend following](images/hf-tsmom.png)
+
+**The trend follower's smile** - Quarterly TSMOM returns against the market, with a quadratic fit.
+
+![The trend follower's smile](images/hf-smile.png)
+
+**Pricing the lookback straddle** - Closed forms against Monte Carlo, continuous and daily monitoring.
+
+![Pricing the lookback straddle](images/hf-straddle-price.png)
+
+**Trend returns on straddle factors** - R² and loadings by lookback.
+
+![Trend returns on straddle factors](images/hf-straddle-betas.png)
+
+**Linear clones** - Out-of-sample clones of four targets.
+
+![Linear clones](images/hf-clones.png)
+
+**Clone quality and weights** - Tracking error by target and the QAI clone's weights.
+
+![Clone quality and weights](images/hf-clone-weights.png)
+
+**Writing index puts** - The PutWrite index against the S&P 500, with drawdowns.
+
+![Writing index puts](images/hf-putwrite.png)
+
+**The put factor** - PutWrite alpha with and without an option factor.
+
+![The put factor](images/hf-put-factor.png)
+
+**Sharpe against MPPM** - Rankings by Sharpe ratio and a manipulation-proof measure.
+
+![Sharpe against MPPM](images/hf-measures.png)
+
+**2 and 20** - Share of gross return taken by fees, with and without a high-water mark.
+
+![2 and 20](images/hf-fees.png)
+
